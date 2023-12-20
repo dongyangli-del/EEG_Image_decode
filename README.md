@@ -2,12 +2,12 @@
 Using vision-language models to decode natural image perception from non-invasive brain recordings.
 
 ## Dataset
-Here we provide our data resource paper:</br>
+Here we provide our dataset used in the source of paper:</br>
 "[A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758?via%3Dihub)]".</br>
 Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
 
-Another similar data set provides a reference:
-"[Human EEG recordings for 1,854 concepts presented in rapid serial visual presentation streams](https://www.nature.com/articles/s41597-021-01102-7)".</br>
+
+Another similar data set provides a reference:</br>"[Human EEG recordings for 1,854 concepts presented in rapid serial visual presentation streams](https://www.nature.com/articles/s41597-021-01102-7)".</br>
 Tijl Grootswagers, Ivy Zhou, Amanda K. Robinson, Martin N. Hebart & Thomas A. Carlson .
 
 
