@@ -10,7 +10,7 @@ Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy
 
 
 ## Data availability
-The raw and preprocessed EEG dataset, the training and test images and the DNN feature maps are available on [OSF][osf]. The ILSVRC-2012 validation and test images can be found on [ImageNet][imagenet]. To run the code, the data must be downloaded and placed into the following directories:
+The raw and preprocessed EEG dataset, the training and test images and the DNN feature maps are available on [OSF][[osf](https://osf.io/3jk45/)]. The ILSVRC-2012 validation and test images can be found on [[ImageNet](https://www.image-net.org/download.php)]. To run the code, the data must be downloaded and placed into the following directories:
 
 - **Raw EEG data:** `../project_directory/eeg_dataset/raw_data/`.
 - **Preprocessed EEG data:** `../project_directory/eeg_dataset/preprocessed_data/`.
