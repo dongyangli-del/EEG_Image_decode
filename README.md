@@ -21,21 +21,22 @@ The raw and preprocessed EEG dataset, the training and test images and the DNN f
 - **DNN feature maps:** `../project_directory/dnn_feature_maps/pca_feature_maps`.
 
 
-
 ## Environment setup
 1. Cloning and building from source
 ```
+conda create -n bmi ipython python=3.10 -y
+conda activate bmi
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
+pip install -U -r requirements.txt
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
-pip install .
-```
-2.If you would like to develop on LAVIS, it is recommended to install in editable mode:
-```
 pip install -e .
+
 ```
 
+
 ## Train 
-- **train_mask_img.py**is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
+- **train_mask_img.py** is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
 ```
 python train_mask_img.py
 ```
