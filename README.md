@@ -22,16 +22,16 @@ The raw and preprocessed EEG dataset, the training and test images and the DNN f
 
 
 ## Environment setup
-1. Cloning and building from source
+You can create a new conda environment and install the required dependencies
 ```
 conda create -n bmi ipython python=3.10 -y
 conda activate bmi
 conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
 pip install -U -r requirements.txt
+# LAVIS makes it possible to use any published CLIP base model.
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
 pip install -e .
-
 ```
 
 
