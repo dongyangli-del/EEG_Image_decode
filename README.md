@@ -2,10 +2,10 @@
 Using vision-language models to decode natural image perception from non-invasive brain recordings.
 
 ## Dataset
-You can get the data set used in this project through the Baidu web disk link [here](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5)</br>
+You can get the data set used in this project through the Baidu web disk link [here](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5).</br>
+
 Here we provide our dataset used in the source of paper:</br>"[A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758?via%3Dihub)]".</br>
 Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
-
 
 
 Another similar data set provides a reference:</br>"[Human EEG recordings for 1,854 concepts presented in rapid serial visual presentation streams](https://www.nature.com/articles/s41597-021-01102-7)".</br>
@@ -35,12 +35,12 @@ pip install -e .
 ```
 
 ## Train 
-Please modify your data set path and run:
+- **train_mask_img.py**is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
 ```
 python train_mask_img.py
 ```
 ## Test 
-Please modify your data set path and run:
+If you want to see the accuracy of the model in 2 categories or 4 categories or categories, then modify your data set path and run:
 ```
 python sp2.py
 ```
