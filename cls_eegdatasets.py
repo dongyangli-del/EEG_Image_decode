@@ -15,7 +15,7 @@ class EEGDataset():
     """
     subjects = ['sub-01', 'sub-02', 'sub-05', 'sub-04', 'sub-03', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']
     """
-    def __init__(self, data_path, subjects=None, train=True, time_window=[0, 0.5], classes = None, pictures = None):
+    def __init__(self, data_path, subjects=None, train=True, time_window=[0, 1.0], classes = None, pictures = None):
         self.data_path = data_path
         self.train = train
         self.subject_list = os.listdir(data_path)
@@ -31,6 +31,7 @@ class EEGDataset():
         assert any(sub in self.subject_list for sub in self.subjects)
 
         self.data, self.labels, self.text, self.img = self.load_data()
+        print("self.data.shape", self.data.shape)
         self.data = self.extract_eeg(self.data, time_window)
         
         
@@ -54,6 +55,7 @@ class EEGDataset():
             self.img_features = self.ImageEncoder(self.img)
             
     def load_data(self):
+        print("self.pictures", self.pictures)
         data_list = []
         label_list = []
         texts = []
@@ -90,7 +92,6 @@ class EEGDataset():
         
         all_folders = [d for d in os.listdir(img_directory) if os.path.isdir(os.path.join(img_directory, d))]
         all_folders.sort()  # 保证文件夹的顺序
-
         if self.classes is not None and self.pictures is not None:
             images = []  # 初始化images列表
             for i in range(len(self.classes)):
@@ -103,21 +104,26 @@ class EEGDataset():
                     all_images.sort()
                     if pic_idx < len(all_images):
                         images.append(os.path.join(folder_path, all_images[pic_idx]))
+        elif self.classes is not None and self.pictures is None:
+            images = []  # 初始化images列表
+            for i in range(len(self.classes)):
+                class_idx = self.classes[i]
+                if class_idx < len(all_folders):
+                    folder = all_folders[class_idx]
+                    folder_path = os.path.join(img_directory, folder)
+                    all_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                    all_images.sort()
+                    images.extend(os.path.join(folder_path, img) for img in all_images)
         elif self.classes is None:
             images = []  # 初始化images列表
             for folder in all_folders:
                 folder_path = os.path.join(img_directory, folder)
                 all_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg'))]
                 all_images.sort()  
-                if self.pictures is not None:
-                    for pic_idx in self.pictures:
-                        if pic_idx < len(all_images):
-                            images.append(os.path.join(folder_path, all_images[pic_idx]))
-                else:
-                    images.extend(os.path.join(folder_path, img) for img in all_images)
+                images.extend(os.path.join(folder_path, img) for img in all_images)
         else:
             # 处理其他情况，比如 self.classes 和 self.pictures 长度不匹配
-            print("Error: Length of self.classes and self.pictures does not match")
+            print("Error")
 
         for subject in self.subjects:
             if self.train:
@@ -136,11 +142,12 @@ class EEGDataset():
                 data_list = []  # 初始化 data_list
                 label_list = []  # 初始化 label_list
                 
-                if self.classes is not None and self.pictures is not None:
+                if self.classes is not None and self.pictures is not None: #特定图
                     for c, p in zip(self.classes, self.pictures):
                         start_index = c * samples_per_class + p
                         if start_index < len(preprocessed_eeg_data):  # 确保索引不超出范围
-                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+1]  # 只选择一条数据
+                            # for i in range(len(samples_per_class)):                        
+                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+ samples_per_class]  # 选择全部的10条数据
                             labels = torch.full((1,), c, dtype=torch.long).detach()  # 添加类标签
                             data_list.append(preprocessed_eeg_data_class)
                             label_list.append(labels)  # 将标签添加到标签列表中
@@ -155,11 +162,12 @@ class EEGDataset():
 
                 else:
                     for i in range(n_classes):
-                        start_index = i * samples_per_class
-                        preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+samples_per_class]
-                        labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()  # 添加类标签
-                        data_list.append(preprocessed_eeg_data_class)
-                        label_list.append(labels)
+                        for j in range(samples_per_class):
+                            start_index = i * samples_per_class + j
+                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+samples_per_class]
+                            labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()  # 添加类标签
+                            data_list.append(preprocessed_eeg_data_class)
+                            label_list.append(labels)
 
                  
             else:
@@ -313,9 +321,9 @@ if __name__ == "__main__":
     # Instantiate the dataset and dataloader
     data_path = '/home/geek/Workspace/BCI/Data/THINGS/EEG/osfstorage-archive'  # Replace with the path to your data
 
+    # train_dataset = EEGDataset(data_path, train=True)
     train_dataset = EEGDataset(data_path, train=True)
-    test_dataset = EEGDataset(data_path, train=False, classes = [1,10])
- 
+    test_dataset = EEGDataset(data_path, train=False)
     # 训练的eeg数据：torch.Size([16540, 4, 17, 100]) [训练图像数量，训练图像重复数量，通道数，脑电信号时间点]
     # 测试的eeg数据：torch.Size([200, 80, 17, 100])
     # 1秒 'times': array([-0.2 , -0.19, -0.18, ... , 0.76,  0.77,  0.78, 0.79])}
