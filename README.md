@@ -36,12 +36,13 @@ pip install -e .
 
 
 ## Train 
-- **train_mask_img.py** is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
+1.- **train_mask_img.py** is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
 ```
 python train_mask_img.py
 ```
+2.- **train_eegnet_clip.py** is provided to learn the training strategy of EEGNetv4 Encoder with CLIP image Encoder during training on traing set 1654 classes. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ## Test 
 If you want to see the accuracy of the model in 2 categories or 4 categories or categories, then modify your data set path and run:
 ```
-python sp2.py
+python train_eegnet_clip.py
 ```
