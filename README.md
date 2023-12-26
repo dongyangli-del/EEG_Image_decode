@@ -31,6 +31,8 @@ pip install -U -r requirements.txt
 ```
 Additional environments needed to run all the code:
 ```
+#install clip
+pip install openai-clip
 # LAVIS makes it possible to use any published CLIP base model.
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
