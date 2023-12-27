@@ -15,7 +15,7 @@ class EEGDataset():
     """
     subjects = ['sub-01', 'sub-02', 'sub-05', 'sub-04', 'sub-03', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']
     """
-    def __init__(self, data_path, subjects=None, train=True, time_window=[0, 1.0], classes = None, pictures = None):
+    def __init__(self, data_path, subjects=None, train=True, time_window=[0, 0.5], classes = None, pictures = None):
         self.data_path = data_path
         self.train = train
         self.subject_list = os.listdir(data_path)
@@ -31,13 +31,12 @@ class EEGDataset():
         assert any(sub in self.subject_list for sub in self.subjects)
 
         self.data, self.labels, self.text, self.img = self.load_data()
-        print("self.data.shape", self.data.shape)
         self.data = self.extract_eeg(self.data, time_window)
         
         
         if self.classes is None and self.pictures is None:
             # Try to load the saved features if they exist
-            features_filename = os.path.join('/home/geek/Workspace/BCI/Data/THINGS/CLIP', 'features_train.pt') if self.train else os.path.join('/home/geek/Workspace/BCI/Data/THINGS/CLIP', 'features_test.pt')
+            features_filename = os.path.join('/home/ldy/Workspace/THINGS/CLIP', 'features_train.pt') if self.train else os.path.join('/home/ldy/Workspace/THINGS/CLIP', 'features_test.pt')
             
             if os.path.exists(features_filename) :
                 saved_features = torch.load(features_filename)
@@ -55,16 +54,15 @@ class EEGDataset():
             self.img_features = self.ImageEncoder(self.img)
             
     def load_data(self):
-        print("self.pictures", self.pictures)
         data_list = []
         label_list = []
         texts = []
         images = []
         
         if self.train:
-            text_directory = "/home/geek/Workspace/BCI/Data/THINGS/images_set/training_images"  
+            text_directory = "/home/ldy/Workspace/THINGS/images_set/training_images"  
         else:
-            text_directory = "/home/geek/Workspace/BCI/Data/THINGS/images_set/test_images"  
+            text_directory = "/home/ldy/Workspace/THINGS/images_set/test_images"
         # 获取该路径下的所有目录
         dirnames = [d for d in os.listdir(text_directory) if os.path.isdir(os.path.join(text_directory, d))]
         dirnames.sort()
@@ -80,18 +78,18 @@ class EEGDataset():
             except ValueError:
                 print(f"Skipped: {dir} due to no '_' found.")
                 continue
-            new_description = f"{description}"
-            # new_description = f"This picture is {description}"
+                
+            new_description = f"This picture is {description}"
             texts.append(new_description)
 
-
         if self.train:
-            img_directory = "/home/geek/Workspace/BCI/Data/THINGS/images_set/training_images"  # 请将其替换为你的新地址
+            img_directory = "/home/ldy/Workspace/THINGS/images_set/training_images"  # 请将其替换为你的新地址
         else:
-            img_directory ="/home/geek/Workspace/BCI/Data/THINGS/images_set/test_images"
+            img_directory ="/home/ldy/Workspace/THINGS/images_set/test_images"
         
         all_folders = [d for d in os.listdir(img_directory) if os.path.isdir(os.path.join(img_directory, d))]
         all_folders.sort()  # 保证文件夹的顺序
+
         if self.classes is not None and self.pictures is not None:
             images = []  # 初始化images列表
             for i in range(len(self.classes)):
@@ -142,12 +140,11 @@ class EEGDataset():
                 data_list = []  # 初始化 data_list
                 label_list = []  # 初始化 label_list
                 
-                if self.classes is not None and self.pictures is not None: #特定图
+                if self.classes is not None and self.pictures is not None:
                     for c, p in zip(self.classes, self.pictures):
                         start_index = c * samples_per_class + p
                         if start_index < len(preprocessed_eeg_data):  # 确保索引不超出范围
-                            # for i in range(len(samples_per_class)):                        
-                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+ samples_per_class]  # 选择全部的10条数据
+                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+1]  # 只选择一条数据
                             labels = torch.full((1,), c, dtype=torch.long).detach()  # 添加类标签
                             data_list.append(preprocessed_eeg_data_class)
                             label_list.append(labels)  # 将标签添加到标签列表中
@@ -162,12 +159,13 @@ class EEGDataset():
 
                 else:
                     for i in range(n_classes):
-                        for j in range(samples_per_class):
-                            start_index = i * samples_per_class + j
-                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+samples_per_class]
-                            labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()  # 添加类标签
-                            data_list.append(preprocessed_eeg_data_class)
-                            label_list.append(labels)
+                        # for j in range(samples_per_class):                            
+                        #     start_index = i * samples_per_class +j
+                        start_index = i * samples_per_class
+                        preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+samples_per_class]
+                        labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()  # 添加类标签
+                        data_list.append(preprocessed_eeg_data_class)
+                        label_list.append(labels)
 
                  
             else:
@@ -197,22 +195,41 @@ class EEGDataset():
         data_tensor = torch.cat(data_list, dim=0).view(-1, *data_list[0].shape[2:])
         # label_list: (subjects * classes) * 10
         # label_tensor: (subjects * classes * 10)
+        print("label_tensor = torch.cat(label_list, dim=0)")
+        # print(label_list)
+        
         label_tensor = torch.cat(label_list, dim=0)
+        # print(label_tensor)
         
         if self.train:
             # label_tensor: (subjects * classes * 10 * 4)
             label_tensor = label_tensor.repeat_interleave(4)
             if self.classes is not None:
-                unique_values = torch.unique(label_tensor)
+                unique_values = list(label_tensor.numpy())
+                lis = []
+                for i in unique_values:
+                    if i not in lis:
+                        lis.append(i)
+                unique_values = torch.tensor(lis)        
+                # unique_values = torch.unique(label_tensor, sorted=False)
+                print(label_tensor)
+                print(unique_values)
+ 
                 mapping = {val.item(): index for index, val in enumerate(unique_values)}
+                print(mapping)
+                print("*"*50)     
                 label_tensor = torch.tensor([mapping[val.item()] for val in label_tensor], dtype=torch.long)
-           
+               
+
         else:
             label_tensor = label_tensor.repeat_interleave(80)
             if self.classes is not None:
-                unique_values = torch.unique(label_tensor)
-                mapping = {val.item(): index for index, val in enumerate(unique_values)}
+                unique_values = torch.unique(label_tensor, sorted=False)
+           
+                mapping = {val.item(): index for index, val in enumerate(torch.flip(unique_values, [0]))}
                 label_tensor = torch.tensor([mapping[val.item()] for val in label_tensor], dtype=torch.long)
+               
+
                     
         self.times = times
         self.ch_names = ch_names
@@ -319,11 +336,13 @@ class EEGDataset():
 
 if __name__ == "__main__":
     # Instantiate the dataset and dataloader
-    data_path = '/home/geek/Workspace/BCI/Data/THINGS/EEG/osfstorage-archive'  # Replace with the path to your data
+    
 
-    # train_dataset = EEGDataset(data_path, train=True)
+    data_path = '/home/weichen/projects/shiyin/EEG-cm/data'  # Replace with the path to your data
+
     train_dataset = EEGDataset(data_path, train=True)
-    test_dataset = EEGDataset(data_path, train=False)
+    test_dataset = EEGDataset(data_path, train=False, classes = [1,10])
+ 
     # 训练的eeg数据：torch.Size([16540, 4, 17, 100]) [训练图像数量，训练图像重复数量，通道数，脑电信号时间点]
     # 测试的eeg数据：torch.Size([200, 80, 17, 100])
     # 1秒 'times': array([-0.2 , -0.19, -0.18, ... , 0.76,  0.77,  0.78, 0.79])}
