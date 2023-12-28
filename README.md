@@ -28,15 +28,18 @@ conda create -n bmi ipython python=3.10 -y
 conda activate bmi
 conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
 pip install -U -r requirements.txt
+pip install wandb
 ```
 Additional environments needed to run all the code:
 ```
 #install clip
 pip install openai-clip
+
 # LAVIS makes it possible to use any published CLIP base model.
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
 pip install -e .
+
 #Below are the braindecode installation commands for the most common use cases.
 pip install braindecode==0.7.0
 ```
