@@ -42,7 +42,7 @@ cd LAVIS
 pip install -e .
 
 #Below are the braindecode installation commands for the most common use cases.
-pip install braindecode==0.7.0
+pip install braindecode==0.8.1
 ```
 ## Train 
 1.- **train_mask_img.py** is provided to learn the training strategy of EEG Encoder using masks and verify it during training. Please modify your data set path and run:
