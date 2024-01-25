@@ -29,12 +29,13 @@ conda activate bmi
 conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
 pip install -U -r requirements.txt
 pip install wandb
+pip install einops
 ```
 Additional environments needed to run all the code:
 ```
 #install clip
-pip install openai-clip
-
+#pip install openai-clip
+pip install open_clip_torch
 # LAVIS makes it possible to use any published CLIP base model.
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
