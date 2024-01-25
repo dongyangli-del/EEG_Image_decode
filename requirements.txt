@@ -83,6 +83,7 @@ nvidia-nvtx-cu11==11.7.91
 omegaconf==2.3.0
 opencv-python-headless==4.5.5.64
 opendatasets==0.1.22
+open3d==0.17.0
 packaging==23.1
 pandas==2.0.3
 parso==0.8.3
