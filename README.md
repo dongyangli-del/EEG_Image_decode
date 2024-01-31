@@ -37,9 +37,9 @@ Additional environments needed to run all the code:
 #pip install openai-clip
 pip install open_clip_torch
 # LAVIS makes it possible to use any published CLIP base model.
-git clone https://github.com/salesforce/LAVIS.git
-cd LAVIS
-pip install -e .
+#git clone https://github.com/salesforce/LAVIS.git
+#cd LAVIS
+#pip install -e .
 
 #Below are the braindecode installation commands for the most common use cases.
 pip install braindecode==0.8.1
