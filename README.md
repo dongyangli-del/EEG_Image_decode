@@ -1,8 +1,8 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 Using vision-language models to decode and reconstruct natural image perception from non-invasive brain recordings.
 
-<img src="framework.png" alt="Framework" width="200"/>
-<img src="encoder.png" alt="Encoder" width="200"/>
+<img src="framework.png" alt="Framework" width="400"/>
+<img src="encoder.png" alt="Encoder" width="400"/>
 
 
 
