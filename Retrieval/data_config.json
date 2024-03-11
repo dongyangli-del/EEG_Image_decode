@@ -1,0 +1,6 @@
+{
+    "data_path": "/home/ldy/Workspace/THINGS/Preprocessed_data_250Hz",
+    "img_directory_training": "/home/ldy/Workspace/THINGS/images_set/training_images",
+    "img_directory_test": "/home/ldy/Workspace/THINGS/images_set/test_images",
+    "features_path":"/home/ldy/Workspace/THINGS/CLIP"
+}
