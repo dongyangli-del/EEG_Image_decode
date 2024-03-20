@@ -24,7 +24,9 @@ pip install open_clip_torch
 git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
 pip install -e .
+
 pip install transformers==0.27.0
+pip install diffusers==0.24.0
 
 #Below are the braindecode installation commands for the most common use cases.
 pip install braindecode==0.8.1
