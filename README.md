@@ -1,8 +1,13 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 Using vision-language models to decode and reconstruct natural image perception from non-invasive brain recordings.
 
+For more details, please refer to our [[paper]](https://arxiv.org/abs/2403.07721).
+
 <img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
+Framework of the proposed method.
+
 <img src="encoder.png" alt="Encoder" style="max-width: 100%; height: auto;"/>
+Encoder structure.
 
 
 
@@ -66,9 +71,9 @@ python EEG-preprocessing/preprocessing.py
 MEG-preprocessing/pre_possess.ipynb
 ```
 
-Also You can get the data set used in this project through the Baidu web disk link [Baidudisk](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5)</br>to run the code.
+Also You can get the data set used in this project through the Baidu web disk [link](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5) to run the code.
 
-## Citation
+## Citations
 
 1.Here we provide our THING-EEG dataset cited in the paper:</br>"[A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758?via%3Dihub)]".</br>
 Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
@@ -77,3 +82,15 @@ Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
 2.Another used THINGS-MEG data set provides a reference:</br>"[THINGS-data, a multimodal collection of large-scale datasets for investigating object representations in human brain and behavior.](https://elifesciences.org/articles/82580.pdf)".</br> Hebart, Martin N., Oliver Contier, Lina Teichmann, Adam H. Rockter, Charles Y. Zheng, Alexis Kidder, Anna Corriveau, Maryam Vaziri-Pashkam, and Chris I. Baker.
 
 3.Thanks to Y Song et al. for their contribution in data set preprocessing and neural network structure, we refer to their work:</br>"[Decoding Natural Images from EEG for Object Recognition](https://arxiv.org/pdf/2308.13234.pdf)".</br> Song, Yonghao, Bingchuan Liu, Xiang Li, Nanlin Shi, Yijun Wang, and Xiaorong Gao. 
+
+## How to Cite
+
+If you find our work on "Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion" useful, please consider citing our paper:
+
+```bibtex
+@article{li2024visual,
+  title={Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion},
+  author={Li, Dongyang and Wei, Chen and Li, Shiying and Zou, Jiachen and Liu, Quanying},
+  journal={arXiv preprint arXiv:2403.07721},
+  year={2024}
+}
