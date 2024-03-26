@@ -56,9 +56,17 @@ The raw and preprocessed EEG dataset, the training and test images and the DNN f
 
 We provide you with preprocessed EEG data and magnetoencephalography data, as well as raw image data at the link. Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we provide images and data for both datasets separately.
 
-If the Internet speed is not good, you can also choose to run it yourself using the preprocessed code in the warehouse.
+If the Internet speed is not good, you can also choose to run it yourself using the preprocessed code in the warehouse:
+## EEG preprocessing
+```
+python EEG-preprocessing/preprocessing.py
+```
+## MEG preprocessing
+```
+MEG-preprocessing/pre_possess.ipynb
+```
 
-Also You can get the data set used in this project through the Baidu web disk link [here](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5)</br>to run the code.
+Also You can get the data set used in this project through the Baidu web disk link [Baidudisk](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5)</br>to run the code.
 
 ## Citation
 
