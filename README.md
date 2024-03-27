@@ -61,19 +61,20 @@ The raw and preprocessed EEG dataset, the training and test images and the DNN f
 - **Training and test images; ILSVRC-2012 validation and test images:** `../project_directory/image_set/`.
 - **DNN feature maps:** `../project_directory/dnn_feature_maps/pca_feature_maps`.
 
-The raw and preprocessed MEG dataset.[OpenNEURO](https://osf.io/3jk45/).
+The raw and preprocessed MEG dataset, the training and test images are available on [OpenNEURO](https://openneuro.org/datasets/ds004212/versions/2.0.0).
+
+We plan to provide you with the preprocessed EEG and magnetoencephalography data used in our experiments at the link, as well as the raw image data.
+Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we will provide images and data for the two datasets separately.
 
 
-We will provide you with preprocessed EEG data and magnetoencephalography data, as well as raw image data at the link. Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we provide images and data for both datasets separately.
 
-
-
-## EEG preprocessing
+## EEG/MEG preprocessing
+Modify your path and execute the following code to perform the same preprocessing on the raw data as in our experiment:
 ```
+#EEG preprocessing
 python EEG-preprocessing/preprocessing.py
-```
-## MEG preprocessing
-```
+
+#MEG preprocessing
 MEG-preprocessing/pre_possess.ipynb
 ```
 
