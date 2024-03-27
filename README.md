@@ -71,7 +71,7 @@ python EEG-preprocessing/preprocessing.py
 MEG-preprocessing/pre_possess.ipynb
 ```
 
-Also You can get the data set used in this project through the Baidu web disk [link](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5) to run the code.
+Also You can get the data set used in this project through the BaiduNetDisk [link](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5) to run the code.
 
 ## Citations
 
