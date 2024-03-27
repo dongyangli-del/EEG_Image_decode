@@ -53,15 +53,21 @@ Reconstruction_Metrics_ATM.ipynb
 
 
 ## Data availability
+You can download the relevant THINGS-EEG data set and THINGS-MEG data set at osf.io.
+
 The raw and preprocessed EEG dataset, the training and test images and the DNN feature maps are available on [osf](https://osf.io/3jk45/).
 - **Raw EEG data:** `../project_directory/eeg_dataset/raw_data/`.
 - **Preprocessed EEG data:** `../project_directory/eeg_dataset/preprocessed_data/`.
 - **Training and test images; ILSVRC-2012 validation and test images:** `../project_directory/image_set/`.
 - **DNN feature maps:** `../project_directory/dnn_feature_maps/pca_feature_maps`.
 
-We provide you with preprocessed EEG data and magnetoencephalography data, as well as raw image data at the link. Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we provide images and data for both datasets separately.
+The raw and preprocessed MEG dataset.[OpenNEURO](https://osf.io/3jk45/).
 
-If the Internet speed is not good, you can also choose to run it yourself using the preprocessed code in the warehouse:
+
+We will provide you with preprocessed EEG data and magnetoencephalography data, as well as raw image data at the link. Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we provide images and data for both datasets separately.
+
+
+
 ## EEG preprocessing
 ```
 python EEG-preprocessing/preprocessing.py
