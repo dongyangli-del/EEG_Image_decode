@@ -1,7 +1,7 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 Using vision-language models to decode and reconstruct natural image perception from non-invasive brain recordings.
 
-For more details, please refer to our [[paper]](https://arxiv.org/abs/2403.07721).
+
 
 <img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
 Framework of the proposed method.
@@ -83,14 +83,3 @@ Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
 
 3.Thanks to Y Song et al. for their contribution in data set preprocessing and neural network structure, we refer to their work:</br>"[Decoding Natural Images from EEG for Object Recognition](https://arxiv.org/pdf/2308.13234.pdf)".</br> Yonghao Song, Bingchuan Liu, Xiang Li, Nanlin Shi, Yijun Wang, and Xiaorong Gao. 
 
-## How to Cite
-
-If you find our work on "Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion" useful, please consider citing our paper:
-
-```bibtex
-@article{li2024visual,
-  title={Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion},
-  author={Dongyang Li, Chen Wei, Shiying Li, Jiachen Zou, and Quanying Liu.},
-  journal={arXiv preprint arXiv:2403.07721},
-  year={2024}
-}
