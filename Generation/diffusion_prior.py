@@ -179,33 +179,20 @@ class DiffusionPriorUNet(nn.Module):
 
         # 3.1 input
         x = self.input_layer(x) 
-        # print("x.shape:", x.shape, "t:", t.shape, "c", c.shape)
+
         # 3.2 hidden encoder
         hidden_activations = []
         for i in range(self.num_layers-1):
             hidden_activations.append(x)
             t_emb = self.encode_time_embedding[i](t) 
-            if c is not None:
-                c_emb = self.encode_cond_embedding[i](c)
-            else:
-                # Adjust the zero tensor size to match the expected dimensions for the current layer
-                c_emb = torch.zeros(x.size(0), self.hidden_dim[i], device=x.device)
-
-            # c_emb = self.decode_cond_embedding[i](c) if c is not None else torch.zeros(x.size(0), self.hidden_dim, device=x.device)
-            # print("x.shape:", x.shape, "t_emb.shape:", t_emb.shape, "c_emb.shape:", c_emb.shape)
+            c_emb = self.encode_cond_embedding[i](c) if c is not None else 0
             x = x + t_emb + c_emb
             x = self.encode_layers[i](x)
         
         # 3.3 hidden decoder
         for i in range(self.num_layers-1):
             t_emb = self.decode_time_embedding[i](t)
-            if c is not None:
-                c_emb = self.decode_cond_embedding[i](c)
-            else:
-                # Adjust the zero tensor size to match the expected dimensions for the current layer
-                c_emb = torch.zeros_like(x)
-            # c_emb = self.decode_cond_embedding[i](c) if c is not None else torch.zeros(x.size(0), self.hidden_dim, device=x.device)
-            # print("x.shape:", x.shape, "t_emb.shape:", t_emb.shape, "c_emb.shape:", c_emb.shape)
+            c_emb = self.decode_cond_embedding[i](c) if c is not None else 0
             x = x + t_emb + c_emb
             x = self.decode_layers[i](x)
             x += hidden_activations[-1-i]
@@ -214,39 +201,22 @@ class DiffusionPriorUNet(nn.Module):
         x = self.output_layer(x)
 
         return x
-    
+
+
 class EmbeddingDataset(Dataset):
-    def __init__(self, c_embeddings=None, h_embeddings=None, h_embeds_uncond=None, cond_sampling_rate=0.5):
+
+    def __init__(self, c_embeddings, h_embeddings):
         self.c_embeddings = c_embeddings
         self.h_embeddings = h_embeddings
-        self.h_embeds_uncond = h_embeds_uncond
-        self.cond_sampling_rate = cond_sampling_rate
-
-        
-        self.N_cond = len(h_embeddings) if h_embeddings is not None else 0
-        self.N_uncond = len(h_embeds_uncond) if h_embeds_uncond is not None else 0
-
-        
-        self.total_samples = self.N_cond + self.N_uncond
 
     def __len__(self):
-        return self.total_samples
+        return len(self.c_embeddings)
 
     def __getitem__(self, idx):
-        if idx < self.N_cond:
-            
-            return {
-                "c_embedding": self.c_embeddings[idx] if self.c_embeddings is not None else torch.zeros(self.h_embeddings[idx].shape),
-                "h_embedding": self.h_embeddings[idx],
-            }
-        else:
-            
-            idx_uncond = idx - self.N_cond
-            return {
-                "c_embedding": torch.zeros_like(self.h_embeddings[0]) if self.c_embeddings is not None else torch.zeros(self.h_embeds_uncond[idx_uncond].shape),
-                "h_embedding": self.h_embeds_uncond[idx_uncond],
-            }
-
+        return {
+            "c_embedding": self.c_embeddings[idx],
+            "h_embedding": self.h_embeddings[idx]
+        }
 
 class EmbeddingDatasetVICE(Dataset):
     def __init__(self, path_data):
@@ -308,8 +278,8 @@ class Pipe:
             self.scheduler = scheduler
             
         self.device = device
-            
-    def train(self, dataloader, dataloader_uncond, num_epochs=10, learning_rate=1e-4):
+        
+    def train(self, dataloader, num_epochs=10, learning_rate=1e-4):
         self.diffusion_prior.train()
         device = self.device
         criterion = nn.MSELoss(reduction='none')
@@ -325,36 +295,36 @@ class Pipe:
 
         for epoch in range(num_epochs):
             loss_sum = 0
-            count = 0
-            for (batch_cond, batch_uncond) in zip(dataloader, dataloader_uncond):
-                count+=1
-                
-                c_embeds_cond = batch_cond['c_embedding'].to(device)
-                h_embeds_cond = batch_cond['h_embedding'].to(device)
-                # print("c_embeds_cond", c_embeds_cond.shape)
-                # print("h_embeds_cond", h_embeds_cond.shape)
-                
-                h_embeds_uncond = batch_uncond['h_embedding'].to(device)
-                c_embeds_uncond = batch_uncond['c_embedding'].to(device)
-                # print("c_embeds_uncond", c_embeds_uncond.shape)
-                
-                
-                c_embeds = torch.cat([c_embeds_cond, c_embeds_uncond], dim=0)
-                h_embeds = torch.cat([h_embeds_cond, h_embeds_uncond], dim=0)
-                # print("c_embeds", c_embeds.shape)
-                # print("h_embeds", h_embeds.shape)
+            for batch in dataloader:
+                c_embeds = batch['c_embedding'].to(device) if 'c_embedding' in batch.keys() else None
+                h_embeds = batch['h_embedding'].to(device)
                 N = h_embeds.shape[0]
 
-                
+                # 1. randomly replecing c_embeds to None
+                if torch.rand(1) < 0.1:
+                    c_embeds = None
+
+                # 2. Generate noisy embeddings as input
                 noise = torch.randn_like(h_embeds)
+
+                # 3. sample timestep
                 timesteps = torch.randint(0, num_train_timesteps, (N,), device=device)
-                perturbed_h_embeds = self.scheduler.add_noise(h_embeds, noise, timesteps)
 
-                
-                noise_pred = self.diffusion_prior(perturbed_h_embeds, timesteps, c_embeds)
+                # 4. add noise to h_embedding
+                perturbed_h_embeds = self.scheduler.add_noise(
+                    h_embeds,
+                    noise,
+                    timesteps
+                ) # (batch_size, embed_dim), (batch_size, )
 
+                # 5. predict noise
+                noise_pre = self.diffusion_prior(perturbed_h_embeds, timesteps, c_embeds)
                 
-                loss = criterion(noise_pred, noise).mean()
+                # 6. loss function weighted by sigma
+                loss = criterion(noise_pre, noise) # (batch_size,)
+                loss = (loss).mean()
+                            
+                # 7. update parameters
                 optimizer.zero_grad()
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.diffusion_prior.parameters(), 1.0)
@@ -362,10 +332,10 @@ class Pipe:
                 optimizer.step()
 
                 loss_sum += loss.item()
-            # print("count", count)
-            loss_epoch = loss_sum / (len(dataloader) + len(dataloader_uncond))
-            print(f'epoch: {epoch}, loss: {loss_epoch}')
 
+            loss_epoch = loss_sum / len(dataloader)
+            print(f'epoch: {epoch}, loss: {loss_epoch}')
+            # lr_scheduler.step(loss)
 
     def generate(
             self, 
