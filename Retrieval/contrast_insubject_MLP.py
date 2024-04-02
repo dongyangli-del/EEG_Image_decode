@@ -18,7 +18,6 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 import tqdm
 from BrainAligning_retrieval.eegdatasets_leaveone import EEGDataset
-from eegencoder import eeg_encoder
 from einops.layers.torch import Rearrange, Reduce
 from lavis.models.clip_models.loss import ClipLoss
 from sklearn.metrics import confusion_matrix
