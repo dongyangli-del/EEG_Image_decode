@@ -450,7 +450,7 @@ def main():
         "epochs": 40,
         "batch_size": 16,
         "logger": True,
-        "insubject": False,  # 注意这里的设置，确保是根据你的需要设置
+        "insubject": False,
         "encoder_type": 'MetaEEG'
     }
 

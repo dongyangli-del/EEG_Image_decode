@@ -37,9 +37,9 @@ class PositionalEncoding(nn.Module):
         super(PositionalEncoding, self).__init__()
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        # 计算额外的一个元素以适应奇数维度
+
         div_term = torch.exp(torch.arange(0, d_model + 1, 2).float() * (-math.log(10000.0) / d_model))
-        # 使用切片确保不会溢出
+
         pe[:, 0::2] = torch.sin(position * div_term[:d_model // 2 + 1])
         pe[:, 1::2] = torch.cos(position * div_term[:d_model // 2])
 
@@ -217,7 +217,7 @@ def train_model(eegmodel, imgmodel, dataloader, optimizer, device, text_features
         total_loss += loss.item()
         
         # logits = logit_scale * eeg_features @ text_features_all.T # (n_batch, n_cls)
-        # 计算对应的 logits
+
         logits_img = logit_scale * eeg_features @ img_features_all.T
         # logits_text = logit_scale * eeg_features @ text_features_all.T
         # logits_single = (logits_text + logits_img) / 2.0        
@@ -243,7 +243,7 @@ def evaluate_model(eegmodel, imgmodel, dataloader, device, text_features_all, im
     alpha =0.9
     top5_correct = 0
     top5_correct_count = 0
-    # 获取所有独特的类别
+
     all_labels = set(range(text_features_all.size(0)))
     top5_acc = 0
     mse_loss_fn = nn.MSELoss()
@@ -280,29 +280,29 @@ def evaluate_model(eegmodel, imgmodel, dataloader, device, text_features_all, im
             total_loss += loss.item()
             
             for idx, label in enumerate(labels):
-                # 先从除了正确类别之外的类别中选择 k-1 个
+
                 possible_classes = list(all_labels - {label.item()})
                 selected_classes = random.sample(possible_classes, k-1) + [label.item()]
                 selected_img_features = img_features_all[selected_classes]
                 if k==200:
-                    # 计算对应的 logits
+
                     logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
                     logits_single = logits_img
                     # print("logits_single", logits_single.shape)
-                    # 获取预测的类别
+
                     # predicted_label = selected_classes[torch.argmax(logits_single).item()]
                     predicted_label = selected_classes[torch.argmax(logits_single).item()] # (n_batch, ) \in {0, 1, ..., n_cls-1}
                     if predicted_label == label.item():
                         # print("predicted_label", predicted_label)
                         correct += 1
                     
-                    # logits_single 是模型的输出，假设其形状为 (n_batch, n_classes)
-                    # label 是真实的标签，形状为 (n_batch,)
-                    # 获取top-5预测的索引
+
+
+
                     # print("logits_single", logits_single)
                     _, top5_indices = torch.topk(logits_single, 5, largest =True)
                                                            
-                    # 检查真实标签是否在top-5预测中
+
                     if label.item() in [selected_classes[i] for i in top5_indices.tolist()]:                
                         top5_correct_count+=1                                
                     total += 1
@@ -331,10 +331,10 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
     results = []  # List to store results for each epoch
     current_time = datetime.datetime.now().strftime("%m-%d_%H-%M")  
     for epoch in range(config['epochs']):
-        # 训练模型
+
         train_loss, train_accuracy = train_model(eeg_model, img_model, train_dataloader, optimizer, device, text_features_train_all, img_features_train_all)
         if (epoch +1) % 5 == 0:                    
-            # 获取当前时间并格式化为字符串（例如：'2024-01-17_15-30-00'）                  
+
             if config['insubject']==True:       
                 os.makedirs(f"./models/contrast/{config['encoder_type']}/{sub}/{current_time}/", exist_ok=True)             
                 file_path = f"./models/contrast/{config['encoder_type']}/{sub}/{current_time}/{epoch+1}.pth"
@@ -347,7 +347,7 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
         regression = None
-        # 评估模型
+
         test_loss, test_accuracy, top5_acc = evaluate_model(eeg_model, regression, test_dataloader, device, text_features_test_all, img_features_test_all,k=200)
         test_losses.append(test_loss)
         test_accuracies.append(test_accuracy)        
@@ -361,7 +361,7 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
         "top5_acc":top5_acc
         }
         results.append(epoch_results)
-        # 如果当前epoch的测试正确率是最好的，保存模型和相关信息
+
         if test_accuracy > best_accuracy:
             best_accuracy = test_accuracy
             best_model_weights = eeg_model.state_dict().copy()
@@ -382,28 +382,28 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
 
         print(f"Epoch {epoch + 1}/{config['epochs']} - Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}, Top5 Accuracy: {top5_acc:.4f}")        
   
-    # # 加载最佳模型权重
+
     # model.load_state_dict(best_model_weights)
 
-    # # # 保存最佳模型
+
     # torch.save(model.state_dict(), '{train_pos_img_text}.pth')
 
-    # 创建5个子图
+
     fig, axs = plt.subplots(3, 2, figsize=(10, 15))
 
-    # 损失图
+
     axs[0, 0].plot(train_losses, label='Train Loss')
     axs[0, 0].plot(test_losses, label='Test Loss')
     axs[0, 0].legend()
     axs[0, 0].set_title("Loss Curve")
 
-    # 总体正确率图
+
     axs[0, 1].plot(train_accuracies, label='Train Accuracy')
     axs[0, 1].plot(test_accuracies, label='Test Accuracy')
     axs[0, 1].legend()
     axs[0, 1].set_title("Accuracy Curve")
 
-    # 构造你要注释的字符串信息
+
     info_text = (f"Best Model Info (from Epoch {best_epoch_info['epoch']}):\n"
                 f"Train Loss: {best_epoch_info['train_loss']:.4f}\n"
                 f"Train Accuracy: {best_epoch_info['train_accuracy']:.4f}\n"
@@ -415,7 +415,7 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
 
     plt.tight_layout()
 
-    # 添加大标题
+
     plt.suptitle('pos_img_text', fontsize=16, y=1.05)
     plt.savefig('pos_img_text')
     logger.finish()

@@ -353,7 +353,7 @@ def main():
         "epochs": 40,
         "batch_size": 1024,
         "logger": True,
-        "insubject": False,  # 注意这里的配置，确保它符合你的需求
+        "insubject": False,
         "encoder_type": 'ATCNet_Encoder'
     }
 
@@ -363,7 +363,7 @@ def main():
     current_time = datetime.datetime.now().strftime("%m-%d_%H-%M")  
 
     for sub in subjects:                    
-        # 为每个被试重新实例化模型
+
         model = globals()[config['encoder_type']]()
         model.to(device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=config['lr'])            
@@ -384,7 +384,7 @@ def main():
         results = main_train_loop(model, train_loader, test_loader, optimizer, device, 
                                   text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
         
-        # 保存结果到CSV文件
+
         results_dir = f"./outputs/{config['encoder_type']}/{sub}"
         os.makedirs(results_dir, exist_ok=True)          
         results_file = f"{results_dir}/{config['encoder_type']}_{'cross_exclude_' if not config['insubject'] else ''}{sub}.csv"

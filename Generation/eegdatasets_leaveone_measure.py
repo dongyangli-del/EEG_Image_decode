@@ -49,7 +49,7 @@ class EEGDataset():
         self.n_cls = 1654 if train else 200
         self.classes = classes
         self.pictures = pictures
-        self.exclude_subject = exclude_subject  # 保存这个参数
+        self.exclude_subject = exclude_subject
 
         # assert any subjects in subject_list
         assert any(sub in self.subject_list for sub in self.subjects)
@@ -90,7 +90,7 @@ class EEGDataset():
             directory = img_directory_training
         else:
             directory = f"{img_directory_test}/{self.subjects[0]}"
-        # 获取该路径下的所有目录
+
         dirnames = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d))]
         dirnames.sort()
         
@@ -98,10 +98,10 @@ class EEGDataset():
             dirnames = [dirnames[i] for i in self.classes]
 
         for dir in dirnames:
-            # 尝试找到第一个'_'的位置
+
             try:
                 idx = dir.index('_')
-                description = dir[idx+1:]  # 从第一个'_'之后取得所有内容
+                description = dir[idx+1:]
             except ValueError:
                 # print(f"Skipped: {dir} due to no '_' found.")
                 # continue
@@ -111,15 +111,15 @@ class EEGDataset():
             texts.append(new_description)
 
         if self.train:
-            img_directory = img_directory_training  # 请将其替换为你的新地址
+            img_directory = img_directory_training
         else:
             img_directory =  f"{img_directory_test}/{self.subjects[0]}"
         
         all_folders = [d for d in os.listdir(img_directory) if os.path.isdir(os.path.join(img_directory, d))]
-        all_folders.sort()  # 保证文件夹的顺序
+        all_folders.sort()
 
         if self.classes is not None and self.pictures is not None:
-            images = []  # 初始化images列表
+            images = []
             for i in range(len(self.classes)):
                 class_idx = self.classes[i]
                 pic_idx = self.pictures[i]
@@ -131,7 +131,7 @@ class EEGDataset():
                     if pic_idx < len(all_images):
                         images.append(os.path.join(folder_path, all_images[pic_idx]))
         elif self.classes is not None and self.pictures is None:
-            images = []  # 初始化images列表
+            images = []
             for i in range(len(self.classes)):
                 class_idx = self.classes[i]
                 if class_idx < len(all_folders):
@@ -141,21 +141,21 @@ class EEGDataset():
                     all_images.sort()
                     images.extend(os.path.join(folder_path, img) for img in all_images)
         elif self.classes is None:
-            images = []  # 初始化images列表
+            images = []
             for folder in all_folders:
                 folder_path = os.path.join(img_directory, folder)
                 all_images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.jpg', '.jpeg'))]
                 all_images.sort()  
                 images.extend(os.path.join(folder_path, img) for img in all_images)
         else:
-            # 处理其他情况，比如 self.classes 和 self.pictures 长度不匹配
+
             print("Error")
             
         print("self.subjects", self.subjects)
         print("exclude_subject", self.exclude_subject)
         for subject in self.subjects:
             if self.train:
-                if subject == self.exclude_subject:  # 跳过被排除的被试
+                if subject == self.exclude_subject:
                     continue            
                 # print("subject:", subject)    
                 file_name = 'preprocessed_eeg_training.npy'
@@ -165,25 +165,25 @@ class EEGDataset():
                 
                 preprocessed_eeg_data = torch.from_numpy(data['preprocessed_eeg_data']).float().detach()                
                 times = torch.from_numpy(data['times']).detach()[50:]
-                ch_names = data['ch_names']  # 保留为 Python 列表，或者进行适当的编码
+                ch_names = data['ch_names']
 
-                n_classes = 1654  # 每个类包含10张图片
-                samples_per_class = 10  # 一个类有十个数据
+                n_classes = 1654
+                samples_per_class = 10
                 
                 if self.classes is not None and self.pictures is not None:
                     for c, p in zip(self.classes, self.pictures):
                         start_index = c * 1 + p
-                        if start_index < len(preprocessed_eeg_data):  # 确保索引不超出范围
-                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+1]  # 只选择一条数据
-                            labels = torch.full((1,), c, dtype=torch.long).detach()  # 添加类标签
+                        if start_index < len(preprocessed_eeg_data):
+                            preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+1]
+                            labels = torch.full((1,), c, dtype=torch.long).detach()
                             data_list.append(preprocessed_eeg_data_class)
-                            label_list.append(labels)  # 将标签添加到标签列表中
+                            label_list.append(labels)
 
                 elif self.classes is not None and self.pictures is None:
                     for c in self.classes:
                         start_index = c * samples_per_class
                         preprocessed_eeg_data_class = preprocessed_eeg_data[start_index: start_index+samples_per_class]
-                        labels = torch.full((samples_per_class,), c, dtype=torch.long).detach()  # 添加类标签
+                        labels = torch.full((samples_per_class,), c, dtype=torch.long).detach()
                         data_list.append(preprocessed_eeg_data_class)
                         label_list.append(labels)
 
@@ -198,22 +198,22 @@ class EEGDataset():
                         # preprocessed_eeg_data_class = torch.mean(preprocessed_eeg_data_class, 1)
                         # preprocessed_eeg_data_class = torch.mean(preprocessed_eeg_data_class, 0)
                         # print("preprocessed_eeg_data_class", preprocessed_eeg_data_class.shape)
-                        labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()  # 添加类标签
+                        labels = torch.full((samples_per_class,), i, dtype=torch.long).detach()
                         data_list.append(preprocessed_eeg_data_class)
                         label_list.append(labels)
 
                  
             else:
-                if subject == self.exclude_subject or self.exclude_subject==None:  # 跳过被排除的被试                    :  # 跳过被排除的被试                                        
+                if subject == self.exclude_subject or self.exclude_subject==None:
                     file_name = 'preprocessed_eeg_test.npy'
                     file_path = os.path.join(self.data_path, subject, file_name)
                     data = np.load(file_path, allow_pickle=True)
                     preprocessed_eeg_data = torch.from_numpy(data['preprocessed_eeg_data']).float().detach()
                     times = torch.from_numpy(data['times']).detach()[50:]
-                    ch_names = data['ch_names']  # 保留为 Python 列表，或者进行适当的编码
+                    ch_names = data['ch_names']
                     n_classes = 200  # Each class contains 1 images
                     
-                    samples_per_class = 1  # 一个类有1个数据
+                    samples_per_class = 1
 
                     for i in range(n_classes):
                         if self.classes is not None and i not in self.classes:  # If we've defined specific classes and the current class is not in the list, skip
@@ -299,10 +299,10 @@ class EEGDataset():
         return extracted_data
     
     def Textencoder(self, text):   
-            # 使用预处理器将文本转换为模型的输入格式
+
             text_inputs = torch.cat([clip.tokenize(t) for t in text]).to(device)
 
-            # 使用CLIP模型来编码文本
+
             with torch.no_grad():
                 text_features = vlmodel.encode_text(text_inputs)
             
@@ -311,7 +311,7 @@ class EEGDataset():
             return text_features
         
     def ImageEncoder(self,images):
-        batch_size = 20  # 设置为合适的值
+        batch_size = 20
         image_features_list = []
       
         for i in range(0, len(images), batch_size):
@@ -390,10 +390,10 @@ if __name__ == "__main__":
     # test_dataset = EEGDataset(data_path, exclude_subject = 'sub-01', train=False)    
     # train_dataset = EEGDataset(data_path, train=True) 
     # test_dataset = EEGDataset(data_path, train=False) 
-    # 训练的eeg数据：torch.Size([16540, 4, 17, 100]) [训练图像数量，训练图像重复数量，通道数，脑电信号时间点]
-    # 测试的eeg数据：torch.Size([200, 80, 17, 100])
-    # 1秒 'times': array([-0.2 , -0.19, -0.18, ... , 0.76,  0.77,  0.78, 0.79])}
-    # 17个通道'ch_names': ['Pz', 'P3', 'P7', 'O1', 'Oz', 'O2', 'P4', 'P8', 'P1', 'P5', 'PO7', 'PO3', 'POz', 'PO4', 'PO8', 'P6', 'P2']
+
+
+
+
     # 100 Hz
     train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)

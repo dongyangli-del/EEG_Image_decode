@@ -460,7 +460,7 @@ def main():
         "epochs": 40,
         "batch_size": 1024,
         "logger": True,
-        "insubject": True,  # 注意这里的设置，确保是根据你的需要设置
+        "insubject": True,
         "encoder_type": 'ATM_E',
         "img_encoder": 'Proj_img'
     }
