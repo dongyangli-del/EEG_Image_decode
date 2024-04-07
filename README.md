@@ -1,6 +1,7 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 Using vision-language models to decode and reconstruct natural image perception from non-invasive brain recordings.
 
+Note: Due to the possible invisible exposure bias in cross-subjects training and testing pointed out by @bobwangPKU, we will completely modify the code and re-run the experiment, and the relevant results will be announced as soon as possible.
 
 
 <img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
