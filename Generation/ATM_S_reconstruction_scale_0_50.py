@@ -421,81 +421,67 @@ def main_train_loop(sub, eeg_model, img_model, train_dataloader, test_dataloader
     logger.finish()
     return results
 
+import datetime
+import os
+import torch
+from torch.utils.data import DataLoader
 
 def main():
-    Encoder_list = ['EEGNetv4_Encoder', 'ATCNet_Encoder', 'EEGConformer_Encoder', 'EEGITNet_Encoder', 'ShallowFBCSPNet_Encoder'] 
     config = {
-    "data_path": "/home/ldy/Workspace/THINGS/Preprocessed_data_250Hz",
-    "project": "train_pos_img_text_rep",
-    "entity": "sustech_rethinkingbci",
-    "name": "lr=3e-4_img_pos_pro_eeg",
-    "lr": 3e-4,
-    "epochs": 40,
-    "batch_size": 1024,
-    "logger": True,
-    "insubject":True,
-    "encoder_type":'ATM_S_reconstruction_scale_0_50',
-    "img_encoder": 'Proj_img'
+        "data_path": "/home/ldy/Workspace/THINGS/Preprocessed_data_250Hz",
+        "project": "train_pos_img_text_rep",
+        "entity": "sustech_rethinkingbci",
+        "name": "lr=3e-4_img_pos_pro_eeg",
+        "lr": 3e-4,
+        "epochs": 40,
+        "batch_size": 1024,
+        "logger": True,
+        "insubject": True,
+        "encoder_type": 'ATM_S_reconstruction_scale_0_50',
+        "img_encoder": 'Proj_img'
     }
-    
-    eeg_model = globals()[config['encoder_type']](63, 250//20)
-    img_model = globals()[config['img_encoder']]()
-    
-    optimizer = torch.optim.AdamW(itertools.chain(eeg_model.parameters(), img_model.parameters()), lr=config['lr'])            
-    print('number of parameters:', sum([p.numel() for p in eeg_model.parameters()])+sum([p.numel() for p in img_model.parameters()]))
-    
+
     device = torch.device("cuda:5" if torch.cuda.is_available() else "cpu")
-    eeg_model.to(device)
-    img_model.to(device)
-    
     data_path = config['data_path']
-    subjects = ['sub-01', 'sub-02', 'sub-03', 'sub-04',  'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']            
-    # subjects = ['sub-08']            
-    if config['insubject']:
-        for sub in subjects:                    
-            train_dataset = EEGDataset(data_path, subjects=[sub], train=True)
-            test_dataset = EEGDataset(data_path, subjects=[sub], train=False)
-            train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
-            test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
+    subjects = ['sub-01', 'sub-02', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']
+    current_time = datetime.datetime.now().strftime("%m-%d_%H-%M")
+
+    for sub in subjects:
+        # Reinitialize models for each subject
+        eeg_model = globals()[config['encoder_type']](63, 250//20)
+        img_model = globals()[config['img_encoder']]()
+        eeg_model.to(device)
+        img_model.to(device)
         
-            text_features_train_all = train_dataset.text_features
-            text_features_test_all = test_dataset.text_features
-            img_features_train_all = train_dataset.img_features
-            img_features_test_all = test_dataset.img_features        
-            
-            results = main_train_loop(sub, eeg_model, img_model, train_loader, test_loader, optimizer, device, 
-                            text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
-            
-            # Save results to a CSV file
-            results_file = f'./outputs/{(config["encoder_type"])}_{sub}.csv'
-            with open(results_file, 'w', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=results[0].keys())
-                writer.writeheader()
-                writer.writerows(results)
-            print(f'Results saved to {results_file}')
-            
-    else:                 
-        for sub in subjects:
-            train_dataset = EEGDataset(data_path, exclude_subject=sub, train=True)
-            test_dataset = EEGDataset(data_path, exclude_subject=sub, train=False)
-            train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
-            test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
+        # Reinitialize optimizer
+        optimizer = torch.optim.AdamW(itertools.chain(eeg_model.parameters(), img_model.parameters()), lr=config['lr'])
 
-            text_features_train_all = train_dataset.text_features
-            text_features_test_all = test_dataset.text_features
-            img_features_train_all = train_dataset.img_features
-            img_features_test_all = test_dataset.img_features
+        print(f'Processing {sub}: number of parameters:', sum([p.numel() for p in eeg_model.parameters()]) + sum([p.numel() for p in img_model.parameters()]))
 
-            results = main_train_loop(sub, eeg_model, img_model, train_loader, test_loader, optimizer, device, 
-                        text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
+        train_dataset = EEGDataset(data_path, subjects=[sub] if config['insubject'] else [], exclude_subject=sub if not config['insubject'] else None, train=True)
+        test_dataset = EEGDataset(data_path, subjects=[sub] if config['insubject'] else [], exclude_subject=sub if not config['insubject'] else None, train=False)
+        train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
+        test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
+        
+        text_features_train_all = train_dataset.text_features
+        text_features_test_all = test_dataset.text_features
+        img_features_train_all = train_dataset.img_features
+        img_features_test_all = test_dataset.img_features
+        
+        results = main_train_loop(sub, eeg_model, img_model, train_loader, test_loader, optimizer, device, 
+                                  text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
+        
+        # Save results to a CSV file
+        results_dir = f"./outputs/{config['encoder_type']}/{sub}/{current_time}"
+        os.makedirs(results_dir, exist_ok=True)
+        results_file = f"{results_dir}/{config['encoder_type']}_{'cross_exclude_' if not config['insubject'] else ''}{sub}.csv"
+        
+        with open(results_file, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=results[0].keys())
+            writer.writeheader()
+            writer.writerows(results)
+        print(f'Results saved to {results_file}')
 
-            # Save results to a CSV file
-            results_file = f'./outputs/{config["encoder_type"]}_cross_exclude_{sub}.csv'
-            with open(results_file, 'w', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=results[0].keys())
-                writer.writeheader()
-                writer.writerows(results)
-                print(f'Results saved to {results_file}')
             
 if __name__ == '__main__':
     main()

@@ -438,86 +438,60 @@ def main_train_loop(sub, model, train_dataloader, test_dataloader, optimizer, de
     plt.savefig('pos_img_text')
     logger.finish()
     return results
+import datetime
 
 def main():  
     config = {
-    "data_path": "/home/ldy/Workspace/THINGS/Preprocessed_data_250Hz",
-    "project": "train_pos_img_text_rep",
-    "entity": "sustech_rethinkingbci",
-    "name": "lr=3e-4_img_pos_pro_eeg",
-    "lr": 3e-4,
-    "epochs": 40,
-    "batch_size": 16,
-    "logger": True,
-    "insubject":False,
-    "encoder_type":'MetaEEG'
+        "data_path": "/home/ldy/Workspace/THINGS/Preprocessed_data_250Hz",
+        "project": "train_pos_img_text_rep",
+        "entity": "sustech_rethinkingbci",
+        "name": "lr=3e-4_img_pos_pro_eeg",
+        "lr": 3e-4,
+        "epochs": 40,
+        "batch_size": 16,
+        "logger": True,
+        "insubject": False,  # 注意这里的设置，确保是根据你的需要设置
+        "encoder_type": 'MetaEEG'
     }
-    
-    model = globals()[config['encoder_type']](63, 250)
-    
-    optimizer = torch.optim.AdamW(model.parameters(), lr=config['lr'])            
-    print('number of parameters:', sum([p.numel() for p in model.parameters()]))
-    
+
     device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    
-    
     data_path = config['data_path']
-    subjects = ['sub-01', 'sub-02', 'sub-03', 'sub-04',  'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']    
-    if config['insubject']:
-        for sub in subjects:                    
-            train_dataset = EEGDataset(data_path, subjects=[sub], train=True)
-            test_dataset = EEGDataset(data_path, subjects=[sub], train=False)
-            train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
-            test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
+    subjects = ['sub-01', 'sub-02', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']
+    current_time = datetime.datetime.now().strftime("%m-%d_%H-%M")  
+
+    for sub in subjects:                    
+        # Re-initialize the model for each subject
+        model = globals()[config['encoder_type']](63, 250)
+        model.to(device)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=config['lr'])            
         
-            text_features_train_all = train_dataset.text_features
-            text_features_test_all = test_dataset.text_features
-            img_features_train_all = train_dataset.img_features
-            img_features_test_all = test_dataset.img_features        
-            
-            results = main_train_loop(sub, model, train_loader, test_loader, optimizer, device, 
-                            text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
-            
-            # Save results to a CSV file
-            results_file = f'./outputs/{(config["encoder_type"])}_{sub}.csv'
-            with open(results_file, 'w', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=results[0].keys())
-                writer.writeheader()
-                writer.writerows(results)
-            print(f'Results saved to {results_file}')
-            
-    else:
-        for sub in subjects:
-            train_dataset = EEGDataset(data_path, exclude_subject=sub, train=True)
-            test_dataset = EEGDataset(data_path, exclude_subject=sub, train=False)
-            train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
-            test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
+        print(f'Processing {sub}: number of parameters:', sum([p.numel() for p in model.parameters()]))
 
-            text_features_train_all = train_dataset.text_features
-            text_features_test_all = test_dataset.text_features
-            img_features_train_all = train_dataset.img_features
-            img_features_test_all = test_dataset.img_features
+        train_dataset = EEGDataset(data_path, subjects=[sub] if config['insubject'] else [], exclude_subject=sub if not config['insubject'] else None, train=True)
+        test_dataset = EEGDataset(data_path, subjects=[sub] if config['insubject'] else [], exclude_subject=sub if not config['insubject'] else None, train=False)
 
-            results = main_train_loop(sub, model, train_loader, test_loader, optimizer, device, 
-                            text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
+        train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=0, drop_last=True)
+        test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True, num_workers=0, drop_last=True)
 
-            # Save results to a CSV file
-            results_file = f'./outputs/{config["encoder_type"]}_cross_exclude_{sub}.csv'
-            with open(results_file, 'w', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=results[0].keys())
-                writer.writeheader()
-                writer.writerows(results)
-                print(f'Results saved to {results_file}')
+        text_features_train_all = train_dataset.text_features
+        text_features_test_all = test_dataset.text_features
+        img_features_train_all = train_dataset.img_features
+        img_features_test_all = test_dataset.img_features
+
+        results = main_train_loop(sub, model, train_loader, test_loader, optimizer, device, 
+                                  text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=config['logger'])
+        
+        # Save results to a CSV file
+        results_dir = f"./outputs/{config['encoder_type']}/{sub}"
+        os.makedirs(results_dir, exist_ok=True)          
+        results_file = f"{results_dir}/{config['encoder_type']}_{'cross_exclude_' if not config['insubject'] else ''}{sub}.csv"
+        
+        with open(results_file, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=results[0].keys())
+            writer.writeheader()
+            writer.writerows(results)
+        print(f'Results saved to {results_file}')
             
 if __name__ == '__main__':
     main()
     
-    
-'''
-1.位置编码的EEGEncoder比其他EEGEncoder 要好  0.5%~1.5%->2%
-2.图像+文本两项loss，并且引入超参数均衡两项loss，效果会好 2%->3%
-3.训练集batch_size越小测试集精度越好，越大越差且难以收敛 2%->3%，测试集batch_size最好为1
-4.温度参数τ越小越好，测试集精度刚开始迅速上升
-5.优化器使用Adam测试集精度上升快
-'''
