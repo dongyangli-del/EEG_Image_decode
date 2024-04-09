@@ -1,9 +1,14 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
-Using vision-language models to decode and reconstruct natural image perception from non-invasive brain recordings.
 
-Note: Previous versions of the code had some fallacies that resulted in possible implicit exposure bias in training and testing across subjects. It has been verified that even if other subjects' data is used for initialization, after 40 epochs of training and testing, only the average test accuracy of the last 10 epochs is taken as the performance evaluation, which has no impact on the conclusions in the paper.
+Note: Previous versions of the code had some fallacies that resulted in possible implicit exposure bias in training and testing across subjects. It has been verified that even if other subjects' data is used for initialization, after 40 epochs of training and testing, only the average test accuracy of the last 10 epochs is taken as the performance evaluation, which has no impact on the conclusions in our paper.
 
 In order to ensure the rigor of the test results, we modified the code and re-ran the experiments of the retrieval and classification tasks. The relevant codes have been synchronized to the remote repository.
+
+The latest retrieval task results are shown in the figure. Compared with NICE, our method is slightly worse at leaving one subject out, but its within-subject performance is much greater than other methods. This lays the foundation for our powerful EEG-to-image generation quality:
+
+<img src="epoch_acc.png" alt="epoch_acc" style="max-width: 100%; height: auto;"/>
+Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects.
+
 
 <img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
 Framework of the proposed method.
