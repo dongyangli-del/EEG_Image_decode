@@ -1,8 +1,15 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 
-Note: Previous versions of the code had some fallacies that resulted in possible implicit exposure bias in training and testing across subjects. It has been verified that even if other subjects' data is used for initialization, after 40 epochs of training and testing, only the average test accuracy of the last 10 epochs is taken as the performance evaluation, which has no impact on the conclusions in our paper.
+<img src="framework.png" alt="Framework" style="max-width: 90%; height: auto;"/>
+Framework of the proposed method.
 
-In order to ensure the rigor of the test results, we modified the code and re-ran the experiments of the retrieval and classification tasks. The relevant codes have been synchronized to the remote repository.
+
+Note: Previous versions of the code had some fallacies that resulted in possible implicit exposure bias in training and testing across subjects. We modified the code and re-ran the experiments of the retrieval and classification tasks. 
+
+We have verified an important point that even if we use data from other subjects for initialization, this approach remains valid. After undergoing 40 epochs of training and testing, we took only the average test accuracy of the last 10 epochs for performance evaluation. This method does not impact the conclusions in our paper.
+
+
+The latest codes have been updated to the remote repository. Please clone or fork the latest project to obtain more rigorous results.
 
 The latest retrieval task results are shown in the figure. Compared with NICE, our method is slightly worse at leaving one subject out, but its within-subject performance is much greater than other methods. This lays the foundation for our powerful EEG-to-image generation quality:
 
@@ -10,11 +17,10 @@ The latest retrieval task results are shown in the figure. Compared with NICE, o
 Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects.
 
 
-<img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
-Framework of the proposed method.
 
-<img src="encoder.png" alt="Encoder" style="max-width: 100%; height: auto;"/>
-Encoder structure.
+
+<img src="fig-genexample.png" alt="fig-genexample" style="max-width: 100%; height: auto;"/>
+Some examples of using EEG to reconstruct stimulus images.
 
 
 
