@@ -150,14 +150,14 @@ def evaluate_model(model, dataloader, device, text_features_all, img_features_al
                 
                 possible_classes = list(all_labels - {label.item()})
                 selected_classes = random.sample(possible_classes, k-1) + [label.item()]
-                selected_text_features = text_features_all[selected_classes]
-                # selected_img_features = img_features_all[selected_classes]
+                # selected_text_features = text_features_all[selected_classes]
+                selected_img_features = img_features_all[selected_classes]
                 if k==200:
                     
-                    # logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
-                    logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T
+                    logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
+                    # logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T
                     # logits_single = (logits_text + logits_img) / 2.0
-                    logits_single = logits_text
+                    logits_single = logits_img
                     # print("logits_single", logits_single.shape)
                     
                     # predicted_label = selected_classes[torch.argmax(logits_single).item()]
@@ -182,10 +182,10 @@ def evaluate_model(model, dataloader, device, text_features_all, img_features_al
                     
                 elif k==2 or k==4 or k==10:
                     
-                    # logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
-                    logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T
+                    logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
+                    # logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T
                     # logits_single = (logits_text + logits_img) / 2.0
-                    logits_single = logits_text
+                    logits_single = logits_img
                     # print("logits_single", logits_single.shape)
                     
                     # predicted_label = selected_classes[torch.argmax(logits_single).item()]
