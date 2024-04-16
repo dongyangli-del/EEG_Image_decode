@@ -13,14 +13,20 @@ The latest codes have been updated to the remote repository. Please clone or for
 
 The latest retrieval task results are shown in the figure. Compared with NICE, our method is slightly worse at leaving one subject out, but its within-subject performance is much greater than other methods. This lays the foundation for our powerful EEG-to-image generation quality:
 
-<img src="epoch_acc.png" alt="epoch_acc" style="max-width: 100%; height: auto;"/>
-Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects.
+<img src="bs=16_epoch_acc.png" alt="bs=16_epoch_acc" style="max-width: 100%; height: auto;"/>  
+Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects. (batchsize=16)
 
 
+<!--  -->
+<img src="epoch_acc.png" alt="epoch_acc" style="max-width: 100%; height: auto;"/>  
+Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects. (batchsize=1024)
 
 
-<img src="fig-genexample.png" alt="fig-genexample" style="max-width: 100%; height: auto;"/>
+<!--  -->
+<img src="fig-genexample.png" alt="fig-genexample" style="max-width: 100%; height: auto;"/>  
 Some examples of using EEG to reconstruct stimulus images.
+
+
 
 
 
