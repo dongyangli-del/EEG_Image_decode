@@ -1,2 +1,0 @@
-test_loss,test_accuracy,v2_acc,v4_acc,v10_acc,top5_acc
-0.0,0.005,0.55,0.28,0.145,0.03

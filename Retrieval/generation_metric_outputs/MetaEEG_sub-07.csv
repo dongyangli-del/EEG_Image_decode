@@ -1,2 +1,0 @@
-epoch,test_loss,test_accuracy,v2_acc,v4_acc,v10_acc,top5_acc
-1,0.3025909466296434,0.05,0.835,0.635,0.38,0.215
