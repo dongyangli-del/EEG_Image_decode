@@ -4,17 +4,6 @@
 <img src="framework.png" alt="Framework" style="max-width: 90%; height: auto;"/>
 Framework of the proposed method.
 
-
-
-<img src="bs=16_epoch_acc.png" alt="bs=16_epoch_acc" style="max-width: 100%; height: auto;"/>  
-Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects. (batchsize=16)
-
-
-<!--  -->
-<img src="epoch_acc.png" alt="epoch_acc" style="max-width: 100%; height: auto;"/>  
-Comparison of test performance between within-subjects (left) and leave-one-out (right) subjects. (batchsize=1024)
-
-
 <!--  -->
 <img src="fig-genexample.png" alt="fig-genexample" style="max-width: 100%; height: auto;"/>  
 Some examples of using EEG to reconstruct stimulus images.
