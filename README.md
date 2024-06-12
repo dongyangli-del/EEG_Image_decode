@@ -1,5 +1,7 @@
 # Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion
 
+**Note: We have updated the original method, and the code will be sorted out and uploaded.**
+
 
 <img src="framework.png" alt="Framework" style="max-width: 90%; height: auto;"/>
 Framework of the proposed method.
