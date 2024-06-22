@@ -33,7 +33,7 @@ git clone https://github.com/salesforce/LAVIS.git
 cd LAVIS
 pip install -e .
 
-pip install transformers==0.27.0
+pip install transformers==4.28.0.dev0
 pip install diffusers==0.24.0
 
 #Below are the braindecode installation commands for the most common use cases.
