@@ -270,7 +270,7 @@ def evaluate_model(eeg_model, img_model, dataloader, device, text_features_all, 
                 
                 if k==200:
                     
-                    logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T                    
+                    logits_text = logit_scale * eeg_features[idx] @   .T                    
                     # logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
                     logits_single = logits_text
                     # print("logits_single", logits_single.shape)
