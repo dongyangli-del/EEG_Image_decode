@@ -2,9 +2,15 @@
 
 **Note: We have updated the original method, and the code will be sorted out and uploaded.**
 
+<img src="temporal_analysis.png" alt="Framework" style="max-width: 90%; height: auto;"/>
+Examples of growing window image reconstruction with 5 different random seeds.
+
 
 <img src="framework.png" alt="Framework" style="max-width: 90%; height: auto;"/>
 Framework of the proposed method.
+
+
+
 
 <!--  -->
 <img src="fig-genexample.png" alt="fig-genexample" style="max-width: 100%; height: auto;"/>  
