@@ -3,9 +3,11 @@
 **Note: We have updated the original method, and the code will be sorted out and uploaded.**
 
 
+<img src="bs=16_test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/>
+
 <img src="test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/>
 
-As the training epochs increases, the test set accuracy of different methods.
+As the training epochs increases, the test set accuracy of different methods. (Top: batchsize is 16. Bottom: batchsize is 1024)
 
 
 <img src="temporal_analysis.png" alt="Framework" style="max-width: 90%; height: auto;"/>
