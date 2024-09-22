@@ -9,7 +9,7 @@
   <a href="#">
   <p align="center">
     <a href='https://arxiv.org/pdf/2403.07721'><img src='http://img.shields.io/badge/Paper-arxiv.2403.07721-B31B1B.svg'></a>
-    <a href='[http://arxiv.org/abs/2306.15195](https://huggingface.co)'><img src='https://img.shields.io/badge/EEG Image decode-%F0%9F%A4%97%20Hugging%20Face-blue'></a>
+    <a href='https://huggingface.co'><img src='https://img.shields.io/badge/EEG Image decode-%F0%9F%A4%97%20Hugging%20Face-blue'></a>
   </p>
 </p>
 
