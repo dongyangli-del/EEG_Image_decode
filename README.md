@@ -5,14 +5,13 @@
 <!-- Badges and Links Section -->
 <div style="display: flex; align-items: center; justify-content: center;">
 
-<a href='https://arxiv.org/pdf/2403.07721' style="text-decoration: none; margin-right: 10px;">
+<a href='https://arxiv.org/pdf/2403.07721' style="text-decoration: none; margin-right: 10px; outline: none;">
     <img alt="Paper" src="http://img.shields.io/badge/Paper-arxiv.2403.07721-B31B1B.svg">
 </a>
 
-<a href='https://huggingface.co/' style="text-decoration: none;">
+<a href='https://huggingface.co/' style="text-decoration: none; outline: none;">
     <img alt="Hugging Face" src="https://img.shields.io/badge/EEG Image decode-%F0%9F%A4%97%20Hugging%20Face-blue">
 </a>
-
 
 </div>
 
