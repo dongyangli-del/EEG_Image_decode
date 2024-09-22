@@ -47,6 +47,7 @@ Framework of the proposed method.
 
 <!--  -->
 <img src="fig-genexample.png" alt="fig-genexample" style="max-width: 90%; height: auto;"/>  
+
 Some examples of using EEG to reconstruct stimulus images.
 
 
@@ -73,19 +74,21 @@ pip install diffusers==0.24.0
 pip install braindecode==0.8.1
 ```
 ## Quick training and test 
+
+If you want to quickly reproduce the results in the paper, please download the relevant **preprocessed data** and **model weights** from [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode) first.
 #### 1.Image Retrieval
 We provide the script to learn the training strategy of EEG Encoder and verify it during training. Please modify your data set path and run:
 ```
 cd Retrieval
 python ATMS_retrieval.py --logger True --gpu cuda:0  --output_dir ./outputs/contrast
 ```
-We also provide the script for joint subject training, which aims to train all subjects jointly and test on a specific subject:
+We also provide the script for **joint subject training**, which aims to train all subjects jointly and test on a specific subject:
 ```
 cd Retrieval
 python ATMS_retrieval_joint_train.py --joint_train --sub sub-01 True --logger True --gpu cuda:0  --output_dir ./outputs/contrast
 ```
 #### 2.Image Reconstruction
-** We provide scripts for image reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
+We provide scripts for image reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```
 # step 1: reconstruct images
 cd Generation/
@@ -95,7 +98,7 @@ Generation_metrics_sub<index>.ipynb
 cd Generation/fMRI-reconstruction-NSD/src
 Reconstruction_Metrics_ATM.ipynb
 ```
-Also, We also provide scripts for image reconstruction combined with the low level pipeline.
+Also, We also provide scripts for image reconstruction combined **with the low level pipeline**.
 ```
 # step 1: train vae encoder and then generate low level images
 cd Generation/
@@ -104,7 +107,6 @@ train_vae_latent_512_low_level_no_average.py
 # step 2: load low level images and then reconstruct them
 cd Generation/
 1x1024_reconstruct_sdxl.ipynb
-
 ```
 
 ## Data availability
