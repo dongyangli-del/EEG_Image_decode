@@ -10,7 +10,7 @@
 </a>
 
 <a href='https://huggingface.co/' style="text-decoration: none;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/EEG%20Image%20decode-%F0%9F%A4%97%20Hugging%20Face-blue">
+    <img alt="Hugging Face" src="https://img.shields.io/badge/EEG Image decode-%F0%9F%A4%97%20Hugging%20Face-blue">
 </a>
 
 
