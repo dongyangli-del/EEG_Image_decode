@@ -17,14 +17,19 @@ import numpy as np
 import torch.nn as nn
 import torchvision.transforms as transforms
 import tqdm
-from BrainAligning_retrieval.eegdatasets_leaveone import EEGDataset
+from eegdatasets_leaveone import EEGDataset
 from einops.layers.torch import Rearrange, Reduce
-from lavis.models.clip_models.loss import ClipLoss
+from loss import ClipLoss
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, Dataset
 import random
 from utils import wandb_logger
 import csv
+from braindecode.models import EEGNetv4, ATCNet, EEGConformer, EEGITNet, ShallowFBCSPNet
+import argparse
+
+
+
 
 
 #--------------------------------NICE-----------------------------------#
