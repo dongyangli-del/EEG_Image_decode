@@ -102,13 +102,31 @@ Generation_metrics_sub<index>.ipynb
 cd Generation/fMRI-reconstruction-NSD/src
 Reconstruction_Metrics_ATM.ipynb
 ```
-Also, We also provide scripts for image reconstruction combined ``with the low level pipeline``.
+
+
+We also provide scripts for image reconstruction combined ``with the low level pipeline``.
 ```
 # step 1: train vae encoder and then generate low level images
 cd Generation/
 train_vae_latent_512_low_level_no_average.py
 
 # step 2: load low level images and then reconstruct them
+cd Generation/
+1x1024_reconstruct_sdxl.ipynb
+```
+
+
+We provide scripts for caption generation combined ``with the semantic level pipeline``.
+```
+# step 1: train feature adapter
+cd Generation/
+image_adapter.ipynb
+
+# step 2: get caption from eeg latent
+cd Generation/
+GIT_caption_batch.ipynb
+
+# step 3: load text prompt and then reconstruct images
 cd Generation/
 1x1024_reconstruct_sdxl.ipynb
 ```
@@ -156,7 +174,7 @@ Also You can get the data set used in this project through the BaiduNetDisk [lin
 
 1.Thanks to Y Song et al. for their contribution in data set preprocessing and neural network structure, we refer to their work:</br>"[Decoding Natural Images from EEG for Object Recognition](https://arxiv.org/pdf/2308.13234.pdf)".</br> Yonghao Song, Bingchuan Liu, Xiang Li, Nanlin Shi, Yijun Wang, and Xiaorong Gao. 
 
-2.We also thank the authors of [SDRecon](https://github.com/yu-takagi/StableDiffusionReconstruction) for providing the codes and the results. Some parts of the training script are based on [MindEye](https://medarc-ai.github.io/mindeye/). Thanks for the awesome research works.
+2.We also thank the authors of [SDRecon](https://github.com/yu-takagi/StableDiffusionReconstruction) for providing the codes and the results. Some parts of the training script are based on [MindEye](https://medarc-ai.github.io/mindeye/) and [MindEye2](https://github.com/MedARC-AI/MindEyeV2). Thanks for the awesome research works.
 
 3.Here we provide our THING-EEG dataset cited in the paper:</br>"[A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758?via%3Dihub)".</br>
 Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
