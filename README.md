@@ -92,6 +92,12 @@ cd Retrieval/
 python ATMS_retrieval_joint_train.py --joint_train --sub sub-01 True --logger True --gpu cuda:0  --output_dir ./outputs/contrast
 ```
 
+Additionally, replicating the results of other methods (e.g. EEGNetV4) by run
+```
+cd Retrieval/
+contrast_retrieval.py --encoder_type EEGNetv4_Encoder --epochs 30 --batch_size 1024
+```
+
 #### 2.Image Reconstruction
 We provide scripts for image reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```

@@ -769,8 +769,8 @@ def main():
     parser.add_argument('--lr', type=float, default=3e-4, help='Learning rate')
     parser.add_argument('--epochs', type=int, default=40, help='Number of training epochs')
     parser.add_argument('--batch_size', type=int, default=1024, help='Batch size')
-    parser.add_argument('--logger', action='store_true', help='Enable logging')
-    parser.add_argument('--insubject', action='store_true', help='Train within subject')
+    parser.add_argument('--logger', default=True, help='Enable logging')
+    parser.add_argument('--insubject', default=True, help='Train within subject')
     parser.add_argument('--encoder_type', type=str, default='Projector', help='EEG encoder model type, you can choose from these options: Projector, EEGConformer_Encoder, MetaEEG, EEGNetv4_Encoder, ShallowFBCSPNet_Encoder, NICE, ATCNet_Encoder, EEGITNet_Encoder')
     parser.add_argument('--device', type=str, default='cuda:0', help='Device to use for training (e.g., "cuda:0" or "cpu")')
 
