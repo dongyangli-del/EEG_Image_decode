@@ -91,43 +91,44 @@ We also provide the script for ``joint subject training``, which aims to train a
 cd Retrieval/
 python ATMS_retrieval_joint_train.py --joint_train --sub sub-01 True --logger True --gpu cuda:0  --output_dir ./outputs/contrast
 ```
+
 #### 2.Image Reconstruction
 We provide scripts for image reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```
-# step 1: reconstruct images
 cd Generation/
+
+# step 1: reconstruct images
 Generation_metrics_sub<index>.ipynb
 
 # step 2: compute metrics
-cd Generation/fMRI-reconstruction-NSD/src
+cd fMRI-reconstruction-NSD/src
 Reconstruction_Metrics_ATM.ipynb
 ```
 
 
 We also provide scripts for image reconstruction combined ``with the low level pipeline``.
 ```
-# step 1: train vae encoder and then generate low level images
 cd Generation/
+
+# step 1: train vae encoder and then generate low level images
 train_vae_latent_512_low_level_no_average.py
 
 # step 2: load low level images and then reconstruct them
-cd Generation/
 1x1024_reconstruct_sdxl.ipynb
 ```
 
 
 We provide scripts for caption generation combined ``with the semantic level pipeline``.
 ```
-# step 1: train feature adapter
 cd Generation/
+
+# step 1: train feature adapter
 image_adapter.ipynb
 
 # step 2: get caption from eeg latent
-cd Generation/
 GIT_caption_batch.ipynb
 
 # step 3: load text prompt and then reconstruct images
-cd Generation/
 1x1024_reconstruct_sdxl.ipynb
 ```
 

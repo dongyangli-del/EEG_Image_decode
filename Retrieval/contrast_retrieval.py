@@ -101,19 +101,6 @@ class Proj_eeg(nn.Sequential):
             nn.LayerNorm(proj_dim),
         )
 
-class Proj_img(nn.Sequential):
-    def __init__(self, embedding_dim=1024, proj_dim=1024, drop_proj=0.3):
-        super().__init__(
-            nn.Linear(embedding_dim, proj_dim),
-            ResidualAdd(nn.Sequential(
-                nn.GELU(),
-                nn.Linear(proj_dim, proj_dim),
-                nn.Dropout(drop_proj),
-            )),
-            nn.LayerNorm(proj_dim),
-        )
-    def forward(self, x):
-        return x 
 
 class NICE(nn.Module):
     def __init__(self):
