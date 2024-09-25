@@ -32,7 +32,7 @@
 Examples of growing window image reconstruction with 5 different random seeds. -->
 
 
-<img src="framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
+<img src="fig-framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
 Framework of our proposed method.
 
 
