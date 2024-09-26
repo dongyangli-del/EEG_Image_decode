@@ -44,7 +44,12 @@ Framework of our proposed method.
 Some examples of using EEG to reconstruct stimulus images.
 
 
-
+## News:
+- [2024/09/26] Our paper is accepted to **NeurIPS 2024**.
+- [2024/09/25] We have updated the [arxiv](https://arxiv.org/abs/2403.07721) paper.
+- [2024/08/01] Update scripts for training and inference in different tasks.
+- [2024/05/19] Update the dataset loading scripts.
+- [2024/03/12] The [arxiv](https://arxiv.org/abs/2403.07721) paper is available.
 
 
 <!-- ## Environment setup -->
@@ -175,6 +180,13 @@ cd MEG-preprocessing/
 MEG-preprocessing/pre_possess.ipynb
 ```
 Also You can get the data set used in this project through the BaiduNetDisk [link](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5) to run the code.
+
+## TODO
+- [√] Release retrieval and reconstruction scripts.
+- [√] Update training scripts of reconstruction pipeline.
+- [ ] Adding validation sets improves performance evaluation accuracy.
+
+
 
 <!-- ## Acknowledge -->
 <h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Acknowledge</h2>
