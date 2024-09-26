@@ -104,16 +104,12 @@ contrast_retrieval.py --encoder_type EEGNetv4_Encoder --epochs 30 --batch_size 1
 ```
 
 #### 2.Image Reconstruction
-We provide scripts for image reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
+We provide quick training and inference scripts for ``clip pipeline`` of visual reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```
 cd Generation/
 
-# step 1: reconstruct images
-Generation_metrics_sub<index>.ipynb
-
-# step 2: compute metrics
-cd fMRI-reconstruction-NSD/src
-Reconstruction_Metrics_ATM.ipynb
+# Reconstruct images in Subject 8
+Generation_metrics_sub8.ipynb
 ```
 
 
@@ -141,6 +137,12 @@ GIT_caption_batch.ipynb
 
 # step 3: load text prompt and then reconstruct images
 1x1024_reconstruct_sdxl.ipynb
+```
+
+To evaluate the quality of the reconstructed images, modify the paths of the reconstructed images and the original stimulus images in the notebook and run:
+```
+#compute metrics, cited from MindEye
+Reconstruction_Metrics_ATM.ipynb
 ```
 
 <!-- ## Data availability -->
