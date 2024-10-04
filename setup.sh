@@ -25,6 +25,8 @@ pip install torchvision==0.15.2 torch==2.0.1
 pip install info-nce-pytorch==0.1.0
 pip install pytorch-msssim
 
+pip install reformer_pytorch
+
 pip install mne
 pip install wandb
 pip install einops
