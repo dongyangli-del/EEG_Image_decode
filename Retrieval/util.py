@@ -197,16 +197,6 @@ def adjust_learning_rate(optimizer, epoch, config):
     return lr
 
 
-def save_model(config, epoch, model, optimizer, loss_scaler):
-    
-    to_save = {
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
-        'epoch': epoch,
-        'scaler': loss_scaler.state_dict(),
-        'config': config,
-    }
-    torch.save(to_save, '/home/weichen/projects/shiyin/DreamDiffusion.pth')
     
 
 def load_model(config, model, checkpoint_path ):
@@ -240,14 +230,22 @@ def unpatchify(x, patch_size):
 
 class wandb_logger:
     def __init__(self, config):
-        wandb.init(
-            # Set the project where this run will be logged
-            project=config['project'],
-            name=config['name'],
-            config=config,
-            entity=config['entity'],            
-            )
-
+        try:
+            wandb.init(
+                # Set the project where this run will be logged
+                project=config['project'],
+                name=config['name'],
+                config=config,
+                entity=config['entity'],            
+                )
+        except:
+                wandb.init(
+                # Set the project where this run will be logged
+                project=config.project,
+                name=config.name,
+                config=config,
+                entity=config.entity,            
+                )
 
         self.config = config
         self.step = None
