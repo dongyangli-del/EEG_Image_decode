@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -23,53 +24,13 @@ class ConvLayer(nn.Module):
         return x
 
 
-# class EncoderLayer(nn.Module):
-#     def __init__(self, attention, d_model, d_ff=None, dropout=0.1, activation="relu"):
-#         super(EncoderLayer, self).__init__()
-#         d_ff = d_ff or 4 * d_model
-#         self.attention = attention
-#         self.conv1 = nn.Conv1d(in_channels=d_model, out_channels=d_ff, kernel_size=1)
-#         self.conv2 = nn.Conv1d(in_channels=d_ff, out_channels=d_model, kernel_size=1)
-#         self.norm1 = nn.LayerNorm(d_model)
-#         self.norm2 = nn.LayerNorm(d_model)
-#         self.dropout = nn.Dropout(dropout)
-#         self.activation = F.relu if activation == "relu" else F.gelu
-
-#     def forward(self, x, attn_mask=None, tau=None, delta=None):
-#         new_x, attn = self.attention(
-#             x, x, x,
-#             attn_mask=attn_mask,
-#             tau=tau, delta=delta
-#         )
-#         x = x + self.dropout(new_x)
-
-#         y = x = self.norm1(x)
-#         y = self.dropout(self.activation(self.conv1(y.transpose(-1, 1))))
-#         y = self.dropout(self.conv2(y).transpose(-1, 1))
-
-#         return self.norm2(x + y), attn
-
-class FeedForwardNetwork(nn.Module):
-    def __init__(self, d_model, d_ff, dropout=0.1):
-        super(FeedForwardNetwork, self).__init__()
-        self.linear1 = nn.Linear(d_model, d_ff)
-        self.dropout = nn.Dropout(dropout)
-        self.linear2 = nn.Linear(d_ff, d_model)
-
-    def forward(self, x):
-        x = self.linear1(x)
-        x = F.relu(x)
-        x = self.dropout(x)
-        x = self.linear2(x)
-        return x
-    
 class EncoderLayer(nn.Module):
     def __init__(self, attention, d_model, d_ff=None, dropout=0.1, activation="relu"):
         super(EncoderLayer, self).__init__()
         d_ff = d_ff or 4 * d_model
         self.attention = attention
-        self.linear1 = nn.Linear(d_model, d_ff)
-        self.linear2 = nn.Linear(d_ff, d_model)
+        self.conv1 = nn.Conv1d(in_channels=d_model, out_channels=d_ff, kernel_size=1)
+        self.conv2 = nn.Conv1d(in_channels=d_ff, out_channels=d_model, kernel_size=1)
         self.norm1 = nn.LayerNorm(d_model)
         self.norm2 = nn.LayerNorm(d_model)
         self.dropout = nn.Dropout(dropout)
@@ -84,28 +45,27 @@ class EncoderLayer(nn.Module):
         x = x + self.dropout(new_x)
 
         y = x = self.norm1(x)
-        y = self.dropout(self.activation(self.linear1(y)))
-        y = self.dropout(self.linear2(y))
+        y = self.dropout(self.activation(self.conv1(y.transpose(-1, 1))))
+        y = self.dropout(self.conv2(y).transpose(-1, 1))
 
         return self.norm2(x + y), attn
 
 
-
 class Encoder(nn.Module):
-    def __init__(self, attn_layers, ffn_layers=None, norm_layer=None):
+    def __init__(self, attn_layers, conv_layers=None, norm_layer=None):
         super(Encoder, self).__init__()
         self.attn_layers = nn.ModuleList(attn_layers)
-        self.ffn_layers = nn.ModuleList(ffn_layers) if ffn_layers is not None else None
+        self.conv_layers = nn.ModuleList(conv_layers) if conv_layers is not None else None
         self.norm = norm_layer
 
     def forward(self, x, attn_mask=None, tau=None, delta=None):
         # x [B, L, D]
         attns = []
-        if self.ffn_layers is not None:
-            for i, (attn_layer, ffn_layer) in enumerate(zip(self.attn_layers, self.ffn_layers)):
+        if self.conv_layers is not None:
+            for i, (attn_layer, conv_layer) in enumerate(zip(self.attn_layers, self.conv_layers)):
                 delta = delta if i == 0 else None
                 x, attn = attn_layer(x, attn_mask=attn_mask, tau=tau, delta=delta)
-                x = ffn_layer(x)
+                x = conv_layer(x)
                 attns.append(attn)
             x, attn = self.attn_layers[-1](x, tau=tau, delta=None)
             attns.append(attn)
@@ -118,7 +78,6 @@ class Encoder(nn.Module):
             x = self.norm(x)
 
         return x, attns
-
 
 
 class DecoderLayer(nn.Module):
