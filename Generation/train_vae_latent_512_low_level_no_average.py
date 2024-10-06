@@ -67,20 +67,20 @@ vae.eval()
 
 class Config:
     def __init__(self):
-        self.task_name = 'classification'  # 示例任务名称
-        self.seq_len = 250                      # 序列长度
-        self.pred_len = 250                     # 预测长度
-        self.output_attention = False          # 是否输出注意力权重
-        self.d_model = 250                     # 模型维度
-        self.embed = 'timeF'                   # 时间编码方式
-        self.freq = 'h'                        # 时间频率
-        self.dropout = 0.25                    # Dropout 比例
-        self.factor = 1                        # 注意力缩放因子
-        self.n_heads = 4                       # 注意力头数
-        self.e_layers = 3                     # 编码器层数
-        self.d_ff = 256                       # 前馈网络维度
-        self.activation = 'gelu'               # 激活函数
-        self.enc_in = 63                        # 编码器输入维度（示例值）
+        self.task_name = 'classification'  # Example task name
+        self.seq_len = 250                      # Sequence length
+        self.pred_len = 250                     # Prediction length
+        self.output_attention = False          # Whether to output attention weights
+        self.d_model = 250                     # Model dimension
+        self.embed = 'timeF'                   # Time encoding method
+        self.freq = 'h'                        # Time frequency
+        self.dropout = 0.25                    # Dropout rate
+        self.factor = 1                        # Attention scaling factor
+        self.n_heads = 4                       # Number of attention heads
+        self.e_layers = 3                     # Number of encoder layers
+        self.d_ff = 256                       # Feed-forward network dimension
+        self.activation = 'gelu'               # Activation function
+        self.enc_in = 63                        # Encoder input dimension (example value)
     
 
 class iTransformer(nn.Module):
@@ -208,16 +208,16 @@ class Proj_eeg(nn.Sequential):
             nn.LayerNorm(proj_dim),
         )
 
-# 损失函数改为MAE
+# Change the loss function to MAE
 from loss import ClipLoss
 clip_loss = ClipLoss()
 
 import torch
 import torch.nn as nn
 import numpy as np
-class ATMS_parallel_256_1024_mse_contras(nn.Module):
+class encoder_low_level(nn.Module):
     def __init__(self, num_channels=63, sequence_length=250, num_subjects=1, num_features=64, num_latents=1024, num_blocks=1):
-        super(ATMS_parallel_256_1024_mse_contras, self).__init__()        
+        super(encoder_low_level, self).__init__()        
         self.subject_wise_linear = nn.ModuleList([nn.Linear(sequence_length, 128) for _ in range(num_subjects)])
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         self.loss_func = ClipLoss()
@@ -313,17 +313,16 @@ def train_model(eegmodel, imgmodel, dataloader, optimizer, device, text_features
                 image_rec = image_processor.postprocess(x_rec, output_type='pil')
                 image_train = image_processor.postprocess(x_train, output_type='pil')
                 # Use label to create a unique file name
-                # label_name = str(labels.item())
                 for i, label in enumerate(labels.tolist()):                    
                     save_path = os.path.join(epoch_save_dir, f"reconstructed_image_{label}.png")                    
                     image_rec[i].save(save_path)
-                             
+                                 
                     save_path2 = os.path.join(epoch_save_dir, f"train_image_{label}.png")                    
                     image_train[i].save(save_path2)
                     image_reconstructed = True                    
-    
+        
         # logits = logit_scale * eeg_features @ text_features_all.T # (n_batch, n_cls)
-        # 计算对应的 logits
+        # Compute the corresponding logits
         # logits_img = logit_scale * eeg_features @ img_features_all.T
         # logits_text = logit_scale * eeg_features @ text_features_all.T
         # logits_single = (logits_text + logits_img) / 2.0        
@@ -383,16 +382,15 @@ def evaluate_model(eegmodel, imgmodel, dataloader, device, text_features_all, im
                 # image_rec[0].save(save_path)
                 
                 # Use label to create a unique file name
-                # label_name = str(labels.item())
                 for i, label in enumerate(labels.tolist()):  
                     base_save_path = os.path.join(epoch_save_dir, f"reconstructed_image_{label}_0.png")
                     save_path = base_save_path
                     k = 0
-                    # 检查文件是否已经存在
+                    # Check if the file already exists
                     while os.path.exists(save_path):
                         save_path = os.path.join(epoch_save_dir, f"reconstructed_image_{label}_{k}.png")
                         k += 1
-                    # 保存图像
+                    # Save the image
                     image_rec[i].save(save_path) 
                 del eeg_features, img_features, eeg_data, image_rec, x_rec    
                 continue
@@ -404,7 +402,7 @@ def evaluate_model(eegmodel, imgmodel, dataloader, device, text_features_all, im
 
 def main_train_loop(sub, current_time, eeg_model, img_model, train_dataloader, test_dataloader, optimizer, device, 
                     text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=None):
-        # 引入余弦退火调度器
+    # Introduce cosine annealing scheduler
     scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=config['epochs'], eta_min=1e-6)
     logger = wandb_logger(config) if logger else None
     logger.watch(eeg_model,logger) 
@@ -422,11 +420,11 @@ def main_train_loop(sub, current_time, eeg_model, img_model, train_dataloader, t
     
     for epoch in range(config['epochs']):
 
-        # 添加日期时间前缀到 save_dir
+        # Add date-time prefix to save_dir
         train_save_dir = f'{current_time}_vae_train_imgs'
         train_loss, train_accuracy, features_tensor = train_model(eeg_model, img_model, train_dataloader, optimizer, device, text_features_train_all, img_features_train_all, save_dir=train_save_dir, epoch=epoch)
         if (epoch +1) % 5 == 0:                    
-            # 获取当前时间并格式化为字符串（例如：'2024-01-17_15-30-00'）                  
+            # Get the current time and format it as a string (e.g., '2024-01-17_15-30-00')                  
             if config['insubject']==True:       
                 os.makedirs(f"./models/contrast/{config['encoder_type']}/{sub}/{current_time}", exist_ok=True)             
                 file_path = f"./models/contrast/{config['encoder_type']}/{sub}/{current_time}/{epoch+1}.pth"
@@ -439,15 +437,15 @@ def main_train_loop(sub, current_time, eeg_model, img_model, train_dataloader, t
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
 
-        # 更新学习率
+        # Update learning rate
         scheduler.step()
         
-        # 评估模型
+        # Evaluate the model
         # test_loss, test_accuracy, top5_acc = evaluate_model(eeg_model, img_model, test_dataloader, device, text_features_test_all, img_features_test_all,k=200)
-                # 调用 evaluate_model 函数
-                        # 获取当前日期和时间，格式为"YYYYMMDD_HHMM"
+                # Call evaluate_model function
+                        # Get the current date and time, format as "YYYYMMDD_HHMM"
 
-        # 添加日期时间前缀到 save_dir
+        # Add date-time prefix to save_dir
         test_save_dir = f'{current_time}_vae_imgs'
         test_loss, test_accuracy, top5_acc = evaluate_model(eeg_model, img_model, test_dataloader, device, text_features_test_all, img_features_test_all, k=200, save_dir=test_save_dir, epoch=epoch)
         test_losses.append(test_loss)
@@ -464,7 +462,7 @@ def main_train_loop(sub, current_time, eeg_model, img_model, train_dataloader, t
         }
 
         results.append(epoch_results)
-        # 如果当前epoch的测试正确率是最好的，保存模型和相关信息
+        # If the test accuracy in the current epoch is the best, save the model and related information
         if test_accuracy > best_accuracy:
             best_accuracy = test_accuracy
             # best_model_weights = model.state_dict().copy()
@@ -502,8 +500,8 @@ def main():
     parser.add_argument('--epochs', type=int, default=200, help='Number of training epochs')
     parser.add_argument('--batch_size', type=int, default=30, help='Batch size for training')
     parser.add_argument('--insubject', default=True, help='Flag to indicate within-subject training')
-    parser.add_argument('--encoder_type', type=str, default='ATMS_parallel_256_1024_mse_contras', 
-                        choices=['EEGNetv4_Encoder', 'ATCNet_Encoder', 'EEGConformer_Encoder', 'EEGITNet_Encoder', 'ShallowFBCSPNet_Encoder', 'ATMS_parallel_256_1024_mse_contras'], 
+    parser.add_argument('--encoder_type', type=str, default='encoder_low_level', 
+                        choices=['EEGNetv4_Encoder', 'ATCNet_Encoder', 'EEGConformer_Encoder', 'EEGITNet_Encoder', 'ShallowFBCSPNet_Encoder', 'encoder_low_level'], 
                         help='Encoder type')
     parser.add_argument('--img_encoder', type=str, default='Proj_img', help='Image encoder type')
     parser.add_argument('--logger', default=True, help='Enable logging')
@@ -567,9 +565,5 @@ def main():
             writer.writerows(results)
             print(f'Results saved to {results_file}')
 
-if __name__ == '__main__':
-    main()
-
-            
 if __name__ == '__main__':
     main()

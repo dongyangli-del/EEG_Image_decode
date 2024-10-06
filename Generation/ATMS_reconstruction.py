@@ -42,21 +42,21 @@ from torch.optim import AdamW
 
 class Config:
     def __init__(self):
-        self.task_name = 'classification'  # 示例任务名称
-        self.seq_len = 250                      # 序列长度
-        self.pred_len = 250                     # 预测长度
-        self.output_attention = False          # 是否输出注意力权重
-        self.d_model = 250                     # 模型维度
-        self.embed = 'timeF'                   # 时间编码方式
-        self.freq = 'h'                        # 时间频率
-        self.dropout = 0.25                    # Dropout 比例
-        self.factor = 1                        # 注意力缩放因子
-        self.n_heads = 4                       # 注意力头数
-        self.e_layers = 1                     # 编码器层数
-        self.d_ff = 256                       # 前馈网络维度
-        self.activation = 'gelu'               # 激活函数
-        self.enc_in = 63                        # 编码器输入维度（示例值）
-    
+        self.task_name = 'classification'  # Example task name
+        self.seq_len = 250                 # Sequence length
+        self.pred_len = 250                # Prediction length
+        self.output_attention = False      # Whether to output attention weights
+        self.d_model = 250                 # Model dimension
+        self.embed = 'timeF'               # Time encoding method
+        self.freq = 'h'                    # Time frequency
+        self.dropout = 0.25                # Dropout rate
+        self.factor = 1                    # Attention scaling factor
+        self.n_heads = 4                   # Number of attention heads
+        self.e_layers = 1                  # Number of encoder layers
+        self.d_ff = 256                    # Dimension of the feedforward network
+        self.activation = 'gelu'           # Activation function
+        self.enc_in = 63                   # Encoder input dimension (example value)
+
 class iTransformer(nn.Module):
     def __init__(self, configs, joint_train=False,  num_subjects=10):
         super(iTransformer, self).__init__()
@@ -91,12 +91,10 @@ class iTransformer(nn.Module):
         # print("enc_out", enc_out.shape)
         return enc_out
 
-
-
 class PatchEmbedding(nn.Module):
     def __init__(self, emb_size=40):
         super().__init__()
-        # revised from shallownet
+        # Revised from ShallowNet
         self.tsconv = nn.Sequential(
             nn.Conv2d(1, 40, (1, 25), stride=(1, 1)),
             nn.AvgPool2d((1, 51), (1, 5)),
@@ -123,7 +121,6 @@ class PatchEmbedding(nn.Module):
         # print("projection", x.shape)  
         return x
 
-
 class ResidualAdd(nn.Module):
     def __init__(self, fn):
         super().__init__()
@@ -135,7 +132,6 @@ class ResidualAdd(nn.Module):
         x += res
         return x
 
-
 class FlattenHead(nn.Sequential):
     def __init__(self):
         super().__init__()
@@ -144,7 +140,6 @@ class FlattenHead(nn.Sequential):
         x = x.contiguous().view(x.size(0), -1)
         return x
 
-
 class Enc_eeg(nn.Sequential):
     def __init__(self, emb_size=40, **kwargs):
         super().__init__(
@@ -152,7 +147,6 @@ class Enc_eeg(nn.Sequential):
             FlattenHead()
         )
 
-        
 class Proj_eeg(nn.Sequential):
     def __init__(self, embedding_dim=1440, proj_dim=1024, drop_proj=0.5):
         super().__init__(
@@ -164,8 +158,6 @@ class Proj_eeg(nn.Sequential):
             )),
             nn.LayerNorm(proj_dim),
         )
-
-
 
 class ATMS(nn.Module):    
     def __init__(self, num_channels=63, sequence_length=250, num_subjects=2, num_features=64, num_latents=1024, num_blocks=1):
@@ -188,7 +180,7 @@ class ATMS(nn.Module):
         
         out = self.proj_eeg(eeg_embedding)
         return out  
-    
+
 def extract_id_from_string(s):
     match = re.search(r'\d+$', s)
     if match:
@@ -214,7 +206,7 @@ def train_model(sub, eeg_model, dataloader, optimizer, device, text_features_all
         
         optimizer.zero_grad()
         
-        batch_size = eeg_data.size(0)  # 假设第一个元素是数据张量
+        batch_size = eeg_data.size(0)  # Assume the first element is the data tensor
         subject_id = extract_id_from_string(sub)
         # eeg_data = eeg_data.permute(0, 2, 1)
         subject_ids = torch.full((batch_size,), subject_id, dtype=torch.long).to(device)
@@ -239,13 +231,13 @@ def train_model(sub, eeg_model, dataloader, optimizer, device, text_features_all
         total_loss += loss.item()
         
         # logits = logit_scale * eeg_features @ text_features_all.T # (n_batch, n_cls)
-        # 计算对应的 logits
+        # Compute corresponding logits
         logits_img = logit_scale * eeg_features @ img_features_all.T
         # logits_text = logit_scale * eeg_features @ text_features_all.T
         # logits_single = (logits_text + logits_img) / 2.0        
         # logits_text = logit_scale * eeg_features @ text_features_all.T
         logits_single = logits_img
-        predicted = torch.argmax(logits_single, dim=1) # (n_batch, ) \in {0, 1, ..., n_cls-1}
+        predicted = torch.argmax(logits_single, dim=1) # (n_batch, ) ∈ {0, 1, ..., n_cls-1}
 
         batch_size = predicted.shape[0]
         total += batch_size
@@ -255,12 +247,9 @@ def train_model(sub, eeg_model, dataloader, optimizer, device, text_features_all
     accuracy = correct / total
     return average_loss, accuracy, torch.cat(features_list, dim=0)
 
-
-
 def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_features_all, k, config):
     eeg_model.eval()
 
-    
     text_features_all = text_features_all.to(device).float()
     img_features_all = img_features_all.to(device).float()
     total_loss = 0
@@ -269,7 +258,6 @@ def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_fe
     alpha = 0.99
     top5_correct = 0
     top5_correct_count = 0
-    # 获取所有独特的类别
     all_labels = set(range(text_features_all.size(0)))
     top5_acc = 0
     mse_loss_fn = nn.MSELoss()
@@ -280,7 +268,7 @@ def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_fe
             labels = labels.to(device)
             img_features = img_features.to(device).float()
             
-            batch_size = eeg_data.size(0)  # 假设第一个元素是数据张量
+            batch_size = eeg_data.size(0)  # Assume the first element is the data tensor
             subject_id = extract_id_from_string(sub)
             # eeg_data = eeg_data.permute(0, 2, 1)
             subject_ids = torch.full((batch_size,), subject_id, dtype=torch.long).to(device)
@@ -299,36 +287,36 @@ def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_fe
             total_loss += loss.item()
             
             for idx, label in enumerate(labels):
-                # 先从除了正确类别之外的类别中选择 k-1 个
+                # First select k-1 classes excluding the correct class
                 possible_classes = list(all_labels - {label.item()})
                 selected_classes = random.sample(possible_classes, k-1) + [label.item()]
                 selected_img_features = img_features_all[selected_classes]
                 selected_text_features = text_features_all[selected_classes]
                 
                 if k==200:
-                    # 计算对应的 logits
+                    # Compute corresponding logits
                     logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
                     logits_single = logits_img
                     # print("logits_single", logits_single.shape)
-                    # 获取预测的类别
+                    # Get predicted class
                     # predicted_label = selected_classes[torch.argmax(logits_single).item()]
-                    predicted_label = selected_classes[torch.argmax(logits_single).item()] # (n_batch, ) \in {0, 1, ..., n_cls-1}
+                    predicted_label = selected_classes[torch.argmax(logits_single).item()] # (n_batch, ) ∈ {0, 1, ..., n_cls-1}
                     if predicted_label == label.item():
                         # print("predicted_label", predicted_label)
                         correct += 1
                     
-                    # logits_single 是模型的输出，假设其形状为 (n_batch, n_classes)
-                    # label 是真实的标签，形状为 (n_batch,)
-                    # 获取top-5预测的索引
+                    # logits_single is the model output, assumed to be shape (n_batch, n_classes)
+                    # label is the true label, shape (n_batch,)
+                    # Get top-5 predicted indices
                     # print("logits_single", logits_single)
                     _, top5_indices = torch.topk(logits_single, 5, largest =True)
                                                            
-                    # 检查真实标签是否在top-5预测中
+                    # Check if true label is in top-5 predictions
                     if label.item() in [selected_classes[i] for i in top5_indices.tolist()]:                
                         top5_correct_count+=1                                
                     total += 1
                 elif k == 50 or k == 100:
-                    # 对于k为50或100的情况，选择k个类别进行评估
+                    # For k=50 or 100, select k classes for evaluation
                     selected_classes = random.sample(possible_classes, k-1) + [label.item()]
 
                     logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
@@ -339,21 +327,21 @@ def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_fe
                         correct += 1
                     _, top5_indices = torch.topk(logits_single, 5, largest =True)
                                                            
-                    # 检查真实标签是否在top-5预测中
+                    # Check if true label is in top-5 predictions
                     if label.item() in [selected_classes[i] for i in top5_indices.tolist()]:                
                         top5_correct_count+=1                                
                     total += 1
                 elif k==2 or k==4 or k==10:
                     selected_classes = random.sample(possible_classes, k-1) + [label.item()]
-                    # 计算对应的 logits
+                    # Compute corresponding logits
                     logits_img = logit_scale * eeg_features[idx] @ selected_img_features.T
                     # logits_text = logit_scale * eeg_features[idx] @ selected_text_features.T
                     # logits_single = (logits_text + logits_img) / 2.0
                     logits_single = logits_img
                     # print("logits_single", logits_single.shape)
-                    # 获取预测的类别
+                    # Get predicted class
                     # predicted_label = selected_classes[torch.argmax(logits_single).item()]
-                    predicted_label = selected_classes[torch.argmax(logits_single).item()] # (n_batch, ) \in {0, 1, ..., n_cls-1}
+                    predicted_label = selected_classes[torch.argmax(logits_single).item()] # (n_batch, ) ∈ {0, 1, ..., n_cls-1}
                     if predicted_label == label.item():
                         correct += 1
                     total += 1
@@ -365,8 +353,7 @@ def evaluate_model(sub, eeg_model, dataloader, device, text_features_all, img_fe
     top5_acc = top5_correct_count / total
     return average_loss, accuracy, top5_acc
 
-def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloader, optimizer, device, 
-                    text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=None):
+def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloader, optimizer, device, text_features_train_all, text_features_test_all, img_features_train_all, img_features_test_all, config, logger=None):
     logger = wandb_logger(config) if logger else None
     logger.watch(eeg_model,logger) 
     train_losses, train_accuracies = [], []
@@ -381,10 +368,10 @@ def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloa
     results = []  # List to store results for each epoch
     
     for epoch in range(config.epochs):
-        # 训练模型
+        # Train the model
         train_loss, train_accuracy, features_tensor = train_model(sub, eeg_model, train_dataloader, optimizer, device, text_features_train_all, img_features_train_all, config=config)
         if (epoch +1) % 5 == 0:                    
-            # 获取当前时间并格式化为字符串（例如：'2024-01-17_15-30-00'）                  
+            # Save the model every 5 epochs                  
             if config.insubject==True:       
                 os.makedirs(f"./models/contrast/{config.encoder_type}/{sub}/{current_time}", exist_ok=True)             
                 file_path = f"./models/contrast/{config.encoder_type}/{sub}/{current_time}/{epoch+1}.pth"
@@ -393,12 +380,12 @@ def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloa
                 os.makedirs(f"./models/contrast/across/{config.encoder_type}/{current_time}", exist_ok=True)             
                 file_path = f"./models/contrast/across/{config.encoder_type}/{current_time}/{epoch+1}.pth"
                 torch.save(eeg_model.state_dict(), file_path)
-            print(f"model saved in {file_path}!")
+            print(f"Model saved in {file_path}!")
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
 
 
-        # 评估模型
+        # Evaluate the model
         test_loss, test_accuracy, top5_acc = evaluate_model(sub, eeg_model, test_dataloader, device, text_features_test_all, img_features_test_all,k=200, config=config)
         _, v2_acc, _ = evaluate_model(sub, eeg_model, test_dataloader, device, text_features_test_all, img_features_test_all, k = 2, config=config)
         _, v4_acc, _ = evaluate_model(sub, eeg_model, test_dataloader, device, text_features_test_all, img_features_test_all, k = 4, config=config)
@@ -429,7 +416,7 @@ def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloa
         }
 
         results.append(epoch_results)
-        # 如果当前epoch的测试正确率是最好的，保存模型和相关信息
+        # If the test accuracy of the current epoch is the best, save the model and related information
         if test_accuracy > best_accuracy:
             best_accuracy = test_accuracy
             # best_model_weights = model.state_dict().copy()
@@ -458,44 +445,44 @@ def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloa
         print(f"Epoch {epoch + 1}/{config.epochs} - Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}, Top5 Accuracy: {top5_acc:.4f}")
         print(f"Epoch {epoch + 1}/{config.epochs} - v2 Accuracy:{v2_acc} - v4 Accuracy:{v4_acc} - v10 Accuracy:{v10_acc} - v50 Accuracy:{v50_acc} - v100 Accuracy:{v100_acc}")
   
-    # # 加载最佳模型权重
+    # # Load best model weights
     # model.load_state_dict(best_model_weights)
 
-    # # # 保存最佳模型
+    # # # Save best model
     # torch.save(model.state_dict(), '{train_pos_img_text}.pth')
 
-    # 创建5个子图
+    # Create 5 subplots
     fig, axs = plt.subplots(3, 2, figsize=(10, 15))
 
-    # 损失图
+    # Loss plot
     axs[0, 0].plot(train_losses, label='Train Loss')
     axs[0, 0].plot(test_losses, label='Test Loss')
     axs[0, 0].legend()
     axs[0, 0].set_title("Loss Curve")
 
-    # 总体正确率图
+    # Overall accuracy plot
     axs[0, 1].plot(train_accuracies, label='Train Accuracy')
     axs[0, 1].plot(test_accuracies, label='Test Accuracy')
     axs[0, 1].legend()
     axs[0, 1].set_title("Accuracy Curve")
 
-    # 以下是你新添加的三个图，这里假设你已经计算了对应的正确率
-    # 2分类正确率图
+    # The following are the three new plots you added, assuming you have calculated the corresponding accuracies
+    # 2-class accuracy plot
     axs[1, 0].plot(v2_accs, label='2-class Accuracy')
     axs[1, 0].legend()
     axs[1, 0].set_title("2-Class Accuracy Curve")
 
-    # 4分类正确率图
+    # 4-class accuracy plot
     axs[1, 1].plot(v4_accs, label='4-class Accuracy')
     axs[1, 1].legend()
     axs[1, 1].set_title("4-Class Accuracy Curve")
 
-    # 10分类正确率图
+    # 10-class accuracy plot
     axs[2, 0].plot(v10_accs, label='10-class Accuracy')
     axs[2, 0].legend()
     axs[2, 0].set_title("10-Class Accuracy Curve")
 
-    # 构造你要注释的字符串信息
+    # Construct the string information you want to annotate
     info_text = (f"Best Model Info (from Epoch {best_epoch_info['epoch']}):\n"
                 f"Train Loss: {best_epoch_info['train_loss']:.4f}\n"
                 f"Train Accuracy: {best_epoch_info['train_accuracy']:.4f}\n"
@@ -510,7 +497,7 @@ def main_train_loop(sub, current_time, eeg_model, train_dataloader, test_dataloa
 
     plt.tight_layout()
 
-    # 添加大标题
+    # Add main title
     plt.suptitle('pos_img_text', fontsize=16, y=1.05)
     plt.savefig('pos_img_text')
     logger.finish()
@@ -586,6 +573,6 @@ def main():
             writer.writerows(results)
             print(f'Results saved to {results_file}')
 
-            
+                
 if __name__ == '__main__':
     main()
