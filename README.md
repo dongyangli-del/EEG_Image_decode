@@ -106,12 +106,16 @@ contrast_retrieval.py --encoder_type EEGNetv4_Encoder --epochs 30 --batch_size 1
 #### 2.Image Reconstruction
 We provide quick training and inference scripts for ``clip pipeline`` of visual reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```
+# Train and generate eeg features in Subject 8
 cd Generation/
+python ATMS_reconstruction.py --insubject True --subjects sub-08 --logger True \
+--gpu cuda:0  --output_dir ./outputs/contrast
+```
 
+```
 # Reconstruct images in Subject 8
 Generation_metrics_sub8.ipynb
 ```
-
 
 We also provide scripts for image reconstruction combined ``with the low level pipeline``.
 ```
