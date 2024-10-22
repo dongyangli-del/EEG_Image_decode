@@ -30,7 +30,6 @@ with open(config_path, "r") as config_file:
 
 # Access the paths from the config
 data_path = config["data_path"]
-features_path = config["features_path"]
 img_directory_training = config["img_directory_training"]
 img_directory_test = config["img_directory_test"]
 

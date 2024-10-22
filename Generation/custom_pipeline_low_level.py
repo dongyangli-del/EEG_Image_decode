@@ -16,14 +16,13 @@ class StableDiffusionXL_lowlevel(StableDiffusionXLPipeline):
         device,
         generator,
     ):
-        # 将图像编码为潜在空间
+
         image = image.to(device=device, dtype=dtype)
         
         latents = self.vae.encode(image).latent_dist.sample(generator=generator)
         print("latents", latents.shape)
         latents = latents * self.vae.config.scaling_factor
 
-        # 添加初始噪声
         noise = torch.randn(latents.shape, generator=generator, device=device, dtype=dtype)
         print("noise", noise.shape)
         latents = latents + noise
@@ -45,7 +44,7 @@ class StableDiffusionXL_lowlevel(StableDiffusionXLPipeline):
         print("latents", latents.shape)
         latents = latents.to(device, dtype=dtype) * self.vae.config.scaling_factor
 
-        # 添加初始噪声
+
         noise = torch.randn(latents.shape, generator=generator, device=device, dtype=dtype)
         print("noise", noise.shape)
         latents = latents + noise

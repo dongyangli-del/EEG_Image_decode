@@ -10,12 +10,12 @@ from PIL import Image
 import requests
 
 import os
-# proxy = 'http://10.16.35.10:13390'
-# os.environ['http_proxy'] = proxy
-# os.environ['https_proxy'] = proxy
+proxy = 'http://127.0.0.1:7890'
+os.environ['http_proxy'] = proxy
+os.environ['https_proxy'] = proxy
 cuda_device_count = torch.cuda.device_count()
 print(cuda_device_count)
-device = "cuda:2" if torch.cuda.is_available() else "cpu"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # vlmodel, preprocess = clip.load("ViT-B/32", device=device)
 model_type = 'ViT-H-14'
 import open_clip
@@ -31,7 +31,6 @@ with open(config_path, "r") as config_file:
 
 # Access the paths from the config
 data_path = config["data_path"]
-features_path = config["features_path"]
 img_directory_training = config["img_directory_training"]
 img_directory_test = config["img_directory_test"]
 
@@ -40,7 +39,7 @@ class EEGDataset():
     """
     subjects = ['sub-01', 'sub-02', 'sub-05', 'sub-04', 'sub-03', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10']
     """
-    def __init__(self, data_path, exclude_subject=None, subjects=None, train=True, time_window=[0, 1.0], classes = None, pictures = None):
+    def __init__(self, data_path, exclude_subject=None, subjects=None, train=True, time_window=[0, 1.0], classes = None, pictures = None, val_size=None):
         self.data_path = data_path
         self.train = train
         self.subject_list = os.listdir(data_path)
@@ -51,7 +50,7 @@ class EEGDataset():
         self.classes = classes
         self.pictures = pictures
         self.exclude_subject = exclude_subject  
-
+        self.val_size = val_size
         # assert any subjects in subject_list
         assert any(sub in self.subject_list for sub in self.subjects)
 
@@ -343,12 +342,12 @@ class EEGDataset():
             if self.train:
                 text_index = (index % index_n_sub_train) // (10 * 4)
             else:
-                text_index = (index % index_n_sub_test) 
+                text_index = (index % index_n_sub_test) // (1 * 80)
             # img_index: classes * 10
             if self.train:
                 img_index = (index % index_n_sub_train) // (4)
             else:
-                img_index = (index % index_n_sub_test) 
+                img_index = (index % index_n_sub_test) // (80)
         else:
             if self.classes is None:
                 index_n_sub_train = self.n_cls * 1 * 4
@@ -360,13 +359,15 @@ class EEGDataset():
             if self.train:
                 text_index = (index % index_n_sub_train) // (1 * 4)
             else:
-                text_index = (index % index_n_sub_test) 
+                text_index = (index % index_n_sub_test) // (1 * 80)
             # img_index: classes * 10
             if self.train:
                 img_index = (index % index_n_sub_train) // (4)
             else:
-                img_index = (index % index_n_sub_test) 
-                
+                img_index = (index % index_n_sub_test) // (80)
+        # print("text_index", text_index)
+        # print("self.text", self.text)
+        # print("self.text", len(self.text))
         text = self.text[text_index]
         img = self.img[img_index]
         
