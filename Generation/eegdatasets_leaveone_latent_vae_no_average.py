@@ -336,12 +336,12 @@ class EEGDataset():
             if self.train:
                 text_index = (index % index_n_sub_train) // (10 * 4)
             else:
-                text_index = (index % index_n_sub_test) // (1 * 80)
+                text_index = (index % index_n_sub_test)
             # img_index: classes * 10
             if self.train:
                 img_index = (index % index_n_sub_train) // (4)
             else:
-                img_index = (index % index_n_sub_test) // (80)
+                img_index = (index % index_n_sub_test)
         else:
             if self.classes is None:
                 index_n_sub_train = self.n_cls * 1 * 4
@@ -353,12 +353,12 @@ class EEGDataset():
             if self.train:
                 text_index = (index % index_n_sub_train) // (1 * 4)
             else:
-                text_index = (index % index_n_sub_test) // (1 * 80)
+                text_index = (index % index_n_sub_test)
             # img_index: classes * 10
             if self.train:
                 img_index = (index % index_n_sub_train) // (4)
             else:
-                img_index = (index % index_n_sub_test) // (80)
+                img_index = (index % index_n_sub_test)
                 
         text = self.text[text_index]
         img = self.img[img_index]
