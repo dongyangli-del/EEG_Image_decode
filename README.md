@@ -213,6 +213,15 @@ Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
 <h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Citation</h2>
 
 ```bibtex
+@inproceedings{
+li2024visual,
+title={Visual Decoding and Reconstruction via {EEG} Embeddings with Guided Diffusion},
+author={Dongyang Li and Chen Wei and Shiying Li and Jiachen Zou and Quanying Liu},
+booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
+year={2024},
+url={https://openreview.net/forum?id=RxkcroC8qP}
+}
+
 @article{li2024visual,
   title={Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion},
   author={Li, Dongyang and Wei, Chen and Li, Shiying and Zou, Jiachen and Liu, Quanying},
