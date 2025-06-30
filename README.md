@@ -86,7 +86,7 @@ pip install braindecode==0.8.1
 
 If you want to quickly reproduce the results in the paper, please download the relevant ``preprocessed data`` and ``model weights`` from [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode) first.
 #### 1.Image Retrieval
-We provide the script to learn the training strategy of EEG Encoder and verify it during training. Please modify your data set path and run:
+We provide the script to learn the training strategy of EEG Encoder and verify it during training. In this task, we use **normalized clip embedding** to train EEG encoder. Please modify your data set path and run:
 ```
 cd Retrieval/
 python ATMS_retrieval.py --logger True --gpu cuda:0  --output_dir ./outputs/contrast
@@ -104,7 +104,7 @@ contrast_retrieval.py --encoder_type EEGNetv4_Encoder --epochs 30 --batch_size 1
 ```
 
 #### 2.Image Reconstruction
-We provide quick training and inference scripts for ``clip pipeline`` of visual reconstruction. Please modify your data set path and run zero-shot on 200 classes test dataset:
+We provide quick training and inference scripts for ``clip pipeline`` of visual reconstruction. In this task, we use **the original clip embedding** to train EEG encoder. Please modify your data set path and run zero-shot on 200 classes test dataset:
 ```
 # Train and generate eeg features in Subject 8
 cd Generation/

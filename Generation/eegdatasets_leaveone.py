@@ -317,7 +317,7 @@ class EEGDataset():
 
             with torch.no_grad():
                 batch_image_features = vlmodel.encode_image(image_inputs)
-                batch_image_features /= batch_image_features.norm(dim=-1, keepdim=True)
+                # batch_image_features /= batch_image_features.norm(dim=-1, keepdim=True)  #use unnormalized clip embedding in reconstruction training
 
             image_features_list.append(batch_image_features)
 
