@@ -233,10 +233,10 @@ class wandb_logger:
         try:
             wandb.init(
                 # Set the project where this run will be logged
-                project=config['project'],
-                name=config['name'],
+                project=config.project,
+                name=config.name,
                 config=config,
-                entity=config['entity'],            
+                entity=config.entity,            
                 )
         except:
                 wandb.init(
