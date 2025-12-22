@@ -142,7 +142,7 @@ class SubjectEmbedding(nn.Module):
 
 #         if self.subject_embedding is not None:
 #             subject_emb = self.subject_embedding(subject_ids)  # (batch_size, 1, d_model)
-#             x = torch.cat([subject_emb, x], dim=1)  # 在序列维度上拼接 (batch_size, seq_len + 1, d_model)
+#             x = torch.cat([subject_emb, x], dim=1)  # Concatenate along sequence dimension (batch_size, seq_len + 1, d_model)
 
 #         return self.dropout(x)
 
@@ -154,7 +154,7 @@ class DataEmbedding(nn.Module):
                 str(subject_id): nn.Linear(c_in, d_model) for subject_id in range(num_subjects)
             })
         else:
-            self.value_embedding = nn.Linear(c_in, d_model)  # 如果没有指定subjects，则使用单一的value embedding
+            self.value_embedding = nn.Linear(c_in, d_model)  # If no subjects specified, use a single value embedding
 
         self.position_embedding = PositionalEmbedding(d_model=d_model)
         self.temporal_embedding = TemporalEmbedding(d_model=d_model, embed_type=embed_type, freq=freq) if embed_type != 'timeF' else TimeFeatureEmbedding(d_model=d_model, embed_type=embed_type, freq=freq)
@@ -165,7 +165,7 @@ class DataEmbedding(nn.Module):
         
     def forward(self, x, x_mark, subject_ids=None, mask=None):
         if self.joint_train:
-            # 使用针对每个subject的特定value embedding
+            # Use subject-specific value embedding for each subject
             x = torch.stack([self.value_embedding[str(subject_id.item())](x[i]) for i, subject_id in enumerate(subject_ids)])
         else:
             x = self.value_embedding(x)
@@ -178,7 +178,7 @@ class DataEmbedding(nn.Module):
 
         if self.subject_embedding is not None:
             subject_emb = self.subject_embedding(subject_ids)  # (batch_size, 1, d_model)
-            x = torch.cat([subject_emb, x], dim=1)  # 在序列维度上拼接 (batch_size, seq_len + 1, d_model)
+            x = torch.cat([subject_emb, x], dim=1)  # Concatenate along sequence dimension (batch_size, seq_len + 1, d_model)
 
         return self.dropout(x)
 

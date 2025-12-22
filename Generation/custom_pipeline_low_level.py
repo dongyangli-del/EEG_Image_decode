@@ -66,8 +66,8 @@ def generate_ip_adapter_embeds(
     timesteps: List[int] = None,
     denoising_end: Optional[float] = None,
     guidance_scale: float = 5.0,
-    img2img_strength: float = 0.85,  # 新增参数
-    low_level_image: Optional[PipelineImageInput] = None,  # 新增参数
+    img2img_strength: float = 0.85,  # New parameter
+    low_level_image: Optional[PipelineImageInput] = None,  # New parameter
     negative_prompt: Optional[Union[str, List[str]]] = None,
     negative_prompt_2: Optional[Union[str, List[str]]] = None,
     num_images_per_prompt: Optional[int] = 1,
@@ -290,9 +290,9 @@ def generate_ip_adapter_embeds(
     device = self._execution_device
 
 
-    # 新增：处理 low_level_image
+    # New: Process low_level_image
     if low_level_image is not None:
-        # 确保 low_level_image 已经被处理为适当的格式
+        # Ensure low_level_image has been processed to the appropriate format
         if isinstance(low_level_image, PIL.Image.Image):
             low_level_image = self.image_processor.preprocess(low_level_image)
         elif isinstance(low_level_image, torch.Tensor):
@@ -329,14 +329,14 @@ def generate_ip_adapter_embeds(
     # 4. Prepare timesteps
     timesteps, num_inference_steps = retrieve_timesteps(self.scheduler, num_inference_steps, device, timesteps)
     
-    # 新增：根据 img2img_strength 计算初始步数
+    # New: Calculate initial steps based on img2img_strength
     if low_level_image is not None:
-        # 根据 img2img_strength 计算需要跳过的时间步数
+        # Calculate the number of timesteps to skip based on img2img_strength
         init_timestep = min(int(num_inference_steps * img2img_strength), num_inference_steps)
         t_start = max(num_inference_steps - init_timestep, 0)
         timesteps = timesteps[t_start:]
     else:
-        t_start = 0  # 如果没有 low_level_image，从头开始
+        t_start = 0  # If no low_level_image, start from the beginning
         
     # 5. Prepare latent variables
     num_channels_latents = self.unet.config.in_channels
@@ -350,9 +350,9 @@ def generate_ip_adapter_embeds(
     #     generator,
     # )
     
-    # 新增：准备初始 latents
+    # New: Prepare initial latents
     if low_level_image is not None and low_level_latent is None:
-        # 编码 low_level_image 到潜在空间
+        # Encode low_level_image to latent space
         latents = self.prepare_latents_img2img(
             low_level_image,
             batch_size * num_images_per_prompt,
@@ -376,7 +376,7 @@ def generate_ip_adapter_embeds(
         )        
         
     else:
-        # 如果没有 low_level_image，随机初始化 latents
+        # If no low_level_image, randomly initialize latents
         latents = self.prepare_latents(
             batch_size * num_images_per_prompt,
             num_channels_latents,

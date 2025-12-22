@@ -7,8 +7,7 @@ from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-os.environ["WANDB_API_KEY"] = "KEY"
-os.environ["WANDB_MODE"] = 'offline'
+# Note: Set WANDB_API_KEY environment variable before running if using wandb
 from itertools import combinations
 
 import clip

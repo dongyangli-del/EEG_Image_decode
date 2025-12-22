@@ -7,8 +7,7 @@ from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-os.environ["WANDB_API_KEY"] = "KEY"
-os.environ["WANDB_MODE"] = 'offline'
+# Note: Set WANDB_API_KEY environment variable before running if using wandb
 from itertools import combinations
 
 import clip
@@ -24,21 +23,21 @@ from einops.layers.torch import Rearrange, Reduce
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, Dataset
 import random
-from util import wandb_logger
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models.util import wandb_logger
 from braindecode.models import EEGNetv4, ATCNet, EEGConformer, EEGITNet, ShallowFBCSPNet
 import csv
 from torch import Tensor
 import itertools
 import math
 import re
-from subject_layers.Transformer_EncDec import Encoder, EncoderLayer
-from subject_layers.SelfAttention_Family import FullAttention, AttentionLayer
-from subject_layers.Embed import DataEmbedding
+from models.subject_layers.Transformer_EncDec import Encoder, EncoderLayer
+from models.subject_layers.SelfAttention_Family import FullAttention, AttentionLayer
+from models.subject_layers.Embed import DataEmbedding
 import numpy as np
-from loss import ClipLoss
+from models.loss import ClipLoss
 import argparse
-os.environ["WANDB_API_KEY"] = "KEY"
-os.environ["WANDB_MODE"] = 'offline'
 
 
 

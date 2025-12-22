@@ -7,8 +7,7 @@ from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-os.environ["WANDB_API_KEY"] = "KEY"
-os.environ["WANDB_MODE"] = 'offline'
+# Note: Set WANDB_API_KEY environment variable before running if using wandb
 from itertools import combinations
 
 import clip
@@ -19,11 +18,13 @@ import torchvision.transforms as transforms
 import tqdm
 from eegdatasets_leaveone import EEGDataset
 from einops.layers.torch import Rearrange, Reduce
-from loss import ClipLoss
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models.loss import ClipLoss
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, Dataset
 import random
-from utils import wandb_logger
+from models.util import wandb_logger
 import csv
 from braindecode.models import EEGNetv4, ATCNet, EEGConformer, EEGITNet, ShallowFBCSPNet
 import argparse

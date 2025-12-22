@@ -10,9 +10,7 @@ from PIL import Image
 import requests
 
 import os
-proxy = 'http://127.0.0.1:7890'
-os.environ['http_proxy'] = proxy
-os.environ['https_proxy'] = proxy
+# Note: Set http_proxy/https_proxy environment variables if needed
 cuda_device_count = torch.cuda.device_count()
 print(cuda_device_count)
 device = "cuda:0" if torch.cuda.is_available() else "cpu"

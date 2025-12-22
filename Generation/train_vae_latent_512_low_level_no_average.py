@@ -7,8 +7,7 @@ from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-os.environ["WANDB_API_KEY"] = "KEY"
-os.environ["WANDB_MODE"] = 'offline'
+# Note: Set WANDB_API_KEY environment variable before running if using wandb
 from itertools import combinations
 
 
@@ -23,7 +22,9 @@ from einops.layers.torch import Rearrange, Reduce
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader, Dataset
 import random
-from util import wandb_logger
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models.util import wandb_logger
 
 import csv
 from torch import Tensor
@@ -209,7 +210,7 @@ class Proj_eeg(nn.Sequential):
         )
 
 # Change the loss function to MAE
-from loss import ClipLoss
+from models.loss import ClipLoss
 clip_loss = ClipLoss()
 
 import torch
@@ -258,7 +259,7 @@ class encoder_low_level(nn.Module):
         out = self.upsampler(x)  # Pass through the upsampler
         return out
 
-from loss import ClipLoss
+from models.loss import ClipLoss
 clip_loss = ClipLoss()
 
 def train_model(eegmodel, imgmodel, dataloader, optimizer, device, text_features_all, img_features_all, save_dir, epoch):

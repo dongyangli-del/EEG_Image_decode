@@ -1,29 +1,136 @@
-Generation/ckpts
-Generation/fintune_ckpts
-Generation/CLIP-dissect
-Generation/centralRepo
-Generation/__pycache__
-Generation/diffusers
-Generation/generated_imgs
-Generation/generated_imgs_tensor
-Generation/Generation
-Generation/generation_metric_outputs
-Generation/LAVIS
-Generation/models
-Generation/old_outputs
-Generation/outputs
-Generation/tab_generation_metric_outputs
-Generation/THINGS
-Generation/Visualize
-Generation/wandb
-Retrieval/__pycache__
-Retrieval/centralRepo
-Retrieval/CLIP-dissect
-Retrieval/conditional_outputs
-Retrieval/LAVIS
-Retrieval/old_outputs
-Retrieval/outputs
-Retrieval/Outputs
-Retrieval/sliding_window_outputs
-Retrieval/Visualize
-Retrieval/wandb
+# ========================================
+# IDE / 编辑器
+# ========================================
+.history/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ========================================
+# 操作系统
+# ========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================================
+# Python
+# ========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.manifest
+*.spec
+
+# 虚拟环境
+env/
+venv/
+.venv/
+ENV/
+
+# ========================================
+# Jupyter Notebook
+# ========================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ========================================
+# 深度学习 / 模型权重
+# ========================================
+*.ckpt
+*.pth
+*.pt
+*.h5
+*.pb
+*.onnx
+*.safetensors
+checkpoints/
+ckpts/
+weights/
+
+# ========================================
+# 实验输出 / 日志
+# ========================================
+outputs/
+old_outputs/
+logs/
+wandb/
+runs/
+mlruns/
+lightning_logs/
+*.log
+
+# ========================================
+# 数据文件（通常太大不应上传）
+# ========================================
+# 如需上传特定数据，可用 !data/important.npy 排除
+data/
+datasets/
+*.npy
+*.npz
+*.mat
+*.pkl
+*.pickle
+*.hdf5
+
+# ========================================
+# 生成的图像 / 结果
+# ========================================
+generated_imgs/
+generated_imgs_tensor/
+generation_metric_outputs/
+tab_generation_metric_outputs/
+
+# ========================================
+# 项目特定目录
+# ========================================
+# Generation 模块
+Generation/ckpts/
+Generation/fintune_ckpts/
+Generation/CLIP-dissect/
+Generation/centralRepo/
+Generation/diffusers/
+Generation/generated_imgs/
+Generation/generated_imgs_tensor/
+Generation/Generation/
+Generation/generation_metric_outputs/
+Generation/LAVIS/
+Generation/models/
+Generation/old_outputs/
+Generation/outputs/
+Generation/tab_generation_metric_outputs/
+Generation/THINGS/
+Generation/Visualize/
+Generation/wandb/
+
+# Retrieval 模块
+Retrieval/centralRepo/
+Retrieval/CLIP-dissect/
+Retrieval/conditional_outputs/
+Retrieval/LAVIS/
+Retrieval/old_outputs/
+Retrieval/outputs/
+Retrieval/Outputs/
+Retrieval/sliding_window_outputs/
+Retrieval/Visualize/
+Retrieval/wandb/
+
+# ========================================
+# 其他
+# ========================================
+*.tmp
+*.bak
+*.cache
+.cache/
+tmp/
+temp/

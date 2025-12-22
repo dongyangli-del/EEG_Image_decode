@@ -21,25 +21,25 @@
 </div>
 
 <!-- 
-<img src="bs=16_test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
+<img src="imgs/bs=16_test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
 <!-- 
-<img src="test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
+<img src="imgs/test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
 
 <!-- As the training epochs increases, the test set accuracy of different methods. (Top: batchsize is 16. Bottom: batchsize is 1024) -->
 
 <!-- 
-<img src="temporal_analysis.png" alt="Framework" style="max-width: 90%; height: auto;"/>
+<img src="imgs/temporal_analysis.png" alt="Framework" style="max-width: 90%; height: auto;"/>
 Examples of growing window image reconstruction with 5 different random seeds. -->
 
 
-<img src="fig-framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
+<img src="imgs/fig-framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
 Framework of our proposed method.
 
 
 
 
 <!--  -->
-<img src="fig-genexample.png" alt="fig-genexample" style="max-width: 90%; height: auto;"/>  
+<img src="imgs/fig-genexample.png" alt="fig-genexample" style="max-width: 90%; height: auto;"/>  
 
 Some examples of using EEG to reconstruct stimulus images.
 
@@ -55,32 +55,32 @@ Some examples of using EEG to reconstruct stimulus images.
 <!-- ## Environment setup -->
 <h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Environment setup</h2>
 
-Run ``setup.sh`` to quickly create a conda environment that contains the packages necessary to run our scripts; activate the environment with conda activate BCI.
+### Option 1: Using setup.sh (Recommended)
 
+Run the setup script to create a conda environment with all dependencies:
 
-
-
-```
+```bash
 . setup.sh
+conda activate BCI
 ```
-You can also create a new conda environment and install the required dependencies by running
-```
+
+### Option 2: Using environment.yml
+
+```bash
 conda env create -f environment.yml
 conda activate BCI
-
-pip install wandb
-pip install einops
 ```
-Additional environments needed to run all the code:
-```
-pip install open_clip_torch
 
-pip install transformers==4.28.0.dev0
-pip install diffusers==0.24.0
+### Option 3: Using requirements.txt
 
-#Below are the braindecode installation commands for the most common use cases.
-pip install braindecode==0.8.1
+```bash
+conda create -n BCI python=3.12 -y
+conda activate BCI
+pip install torch==2.5.0 torchvision==0.20.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements.txt
 ```
+
+
 <!-- ## Quick training and test  -->
 <h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Quick training and test</h2>
 
