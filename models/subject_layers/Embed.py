@@ -120,31 +120,6 @@ class SubjectEmbedding(nn.Module):
         else:
             return self.subject_embedding(subject_ids).unsqueeze(1)
 
-        
-# class DataEmbedding(nn.Module):
-#     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1, num_subjects=None):
-#         super(DataEmbedding, self).__init__()
-#         self.value_embedding = nn.Linear(c_in, d_model)
-#         self.position_embedding = PositionalEmbedding(d_model=d_model)
-#         self.temporal_embedding = TemporalEmbedding(d_model=d_model, embed_type=embed_type, freq=freq) if embed_type != 'timeF' else TimeFeatureEmbedding(d_model=d_model, embed_type=embed_type, freq=freq)
-#         self.dropout = nn.Dropout(p=dropout)
-#         self.subject_embedding = SubjectEmbedding(num_subjects, d_model) if num_subjects is not None else None
-#         self.mask_token = nn.Parameter(torch.randn(1, d_model))  # Mask token embedding
-
-#     def forward(self, x, x_mark, subject_ids=None, mask=None):
-#         if x_mark is None:
-#             x = self.value_embedding(x) 
-#         else:
-#             x = self.value_embedding(x) + self.temporal_embedding(x_mark) + self.position_embedding(x)
-
-#         if mask is not None:
-#             x = x * (~mask.bool()) + self.mask_token * mask.float()
-
-#         if self.subject_embedding is not None:
-#             subject_emb = self.subject_embedding(subject_ids)  # (batch_size, 1, d_model)
-#             x = torch.cat([subject_emb, x], dim=1)  # Concatenate along sequence dimension (batch_size, seq_len + 1, d_model)
-
-#         return self.dropout(x)
 
 class DataEmbedding(nn.Module):
     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1, joint_train=False, num_subjects=None):
@@ -170,8 +145,12 @@ class DataEmbedding(nn.Module):
         else:
             x = self.value_embedding(x)
 
+        # Always add positional embedding (important for EEG sequence modeling)
+        x = x + self.position_embedding(x)
+        
+        # Only add temporal embedding when x_mark is provided (for time-series with calendar features)
         if x_mark is not None:
-            x = x + self.temporal_embedding(x_mark) + self.position_embedding(x)
+            x = x + self.temporal_embedding(x_mark)
 
         if mask is not None:
             x = x * (~mask.bool()) + self.mask_token * mask.float()
