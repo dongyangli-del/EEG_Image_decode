@@ -14,8 +14,8 @@ braindecode==0.8.1
 mne==1.9.0
 
 # CLIP and Vision
-clip @ git+https://github.com/openai/CLIP.git
-open-clip-torch
+clip @ git+https://github.com/openai/CLIP.git@a9b1bf5920416aaeaec965c25dd9e8f98c864f16
+open-clip-torch==2.26.1
 
 # Image Generation
 dalle2-pytorch==1.15.6
@@ -42,11 +42,11 @@ reformer-pytorch==1.4.4
 wandb==0.19.10
 
 # Image Processing
-Pillow
+Pillow==12.1.1
 imageio==2.37.0
 kornia==0.8.0
 
 # Utilities
 ftfy==6.3.1
 regex==2024.11.6
-clip-retrieval
+clip-retrieval==2.16.4

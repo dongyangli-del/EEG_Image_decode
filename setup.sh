@@ -35,9 +35,9 @@ pip install huggingface-hub==0.30.2
 pip install accelerate==1.5.2
 
 echo "Installing CLIP packages..."
-pip install git+https://github.com/openai/CLIP.git
-pip install open_clip_torch
-pip install clip-retrieval
+pip install "clip @ git+https://github.com/openai/CLIP.git@a9b1bf5920416aaeaec965c25dd9e8f98c864f16"
+pip install open-clip-torch==2.26.1
+pip install clip-retrieval==2.16.4
 
 echo "Installing EEG processing packages..."
 pip install braindecode==0.8.1
@@ -70,3 +70,8 @@ echo "============================================================"
 echo "Environment setup complete!"
 echo "Activate with: conda activate $ENV_NAME"
 echo "============================================================"
+
+# Final verification: install any remaining deps from requirements.txt
+echo "Verifying full requirements.txt..."
+pip install -r requirements.txt --quiet
+echo "All dependencies installed."

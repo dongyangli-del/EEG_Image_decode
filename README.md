@@ -1,235 +1,174 @@
 <div align="center">
 
-<h2 style="border-bottom: 1px solid lightgray;">Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion</h2>
+<h1>Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion</h1>
 
-<!-- Badges and Links Section -->
-<div style="display: flex; align-items: center; justify-content: center;">
-
-<p align="center">
-  <a href="#">
-  <p align="center">
-    <a href='https://arxiv.org/pdf/2403.07721'><img src='http://img.shields.io/badge/Paper-arxiv.2403.07721-B31B1B.svg'></a>
-    <a href='https://huggingface.co/datasets/LidongYang/EEG_Image_decode/tree/main'><img src='https://img.shields.io/badge/EEG Image decode-%F0%9F%A4%97%20Hugging%20Face-blue'></a>
-  </p>
+<p>
+  <a href="https://arxiv.org/abs/2403.07721"><img src="https://img.shields.io/badge/arXiv-2403.07721-B31B1B.svg" alt="arXiv"></a>
+  <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/ba5f1233efa77787ff9ec015877dbd1f-Paper-Conference.pdf"><img src="https://img.shields.io/badge/NeurIPS-2024-4b44ce.svg" alt="NeurIPS 2024"></a>
+  <a href="https://huggingface.co/datasets/LidongYang/EEG_Image_decode"><img src="https://img.shields.io/badge/🤗_HuggingFace-Dataset-blue" alt="Hugging Face"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
 </p>
 
+<p>
+  <b>Dongyang Li · Chen Wei · Shiying Li · Jiachen Zou · Quanying Liu</b><br>
+  Southern University of Science and Technology
+</p>
+
+<img src="imgs/fig-framework.png" alt="Framework" width="88%"/>
+<br><br>
+<img src="imgs/fig-genexample.png" alt="Reconstruction examples" width="78%"/>
 
 </div>
 
-<br/>
+---
 
-</div>
+## Quick Start
 
-<!-- 
-<img src="imgs/bs=16_test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
-<!-- 
-<img src="imgs/test_acc.png" alt="Framework" style="max-width: 90%; height: auto;"/> -->
-
-<!-- As the training epochs increases, the test set accuracy of different methods. (Top: batchsize is 16. Bottom: batchsize is 1024) -->
-
-<!-- 
-<img src="imgs/temporal_analysis.png" alt="Framework" style="max-width: 90%; height: auto;"/>
-Examples of growing window image reconstruction with 5 different random seeds. -->
-
-
-<img src="imgs/fig-framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
-Framework of our proposed method.
-
-
-
-
-<!--  -->
-<img src="imgs/fig-genexample.png" alt="fig-genexample" style="max-width: 90%; height: auto;"/>  
-
-Some examples of using EEG to reconstruct stimulus images.
-
-
-## News:
-- [2024/09/26] Our paper is accepted to **NeurIPS 2024**.
-- [2024/09/25] We have updated the [arxiv](https://arxiv.org/abs/2403.07721) paper.
-- [2024/08/01] Update scripts for training and inference in different tasks.
-- [2024/05/19] Update the dataset loading scripts.
-- [2024/03/12] The [arxiv](https://arxiv.org/abs/2403.07721) paper is available.
-
-
-<!-- ## Environment setup -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Environment setup</h2>
-
-### Option 1: Using setup.sh (Recommended)
-
-Run the setup script to create a conda environment with all dependencies:
+### Environment
 
 ```bash
-. setup.sh
-conda activate BCI
+. setup.sh && conda activate BCI
 ```
 
-### Option 2: Using environment.yml
+### Data
+
+Download preprocessed EEG data and THINGS stimulus images from [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode).
+
+---
+
+## Task 1 — Image Retrieval
+
+Entry point: **`Retrieval/run.sh`**
+
+Train an ATMS encoder with CLIP contrastive loss for zero-shot 200-way image retrieval.
 
 ```bash
-conda env create -f environment.yml
-conda activate BCI
+cd Retrieval/
+bash run.sh
 ```
 
-### Option 3: Using requirements.txt
+All configurations are controlled by environment variables at the top of the script:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ENCODER` | `ATMS` | Encoder architecture (`ATMS` / `EEGNetv4_Encoder` / `EEGConformer_Encoder` / …) |
+| `MODE` | `intra` | Training mode: `intra` (within-subject) / `loso` (leave-one-out) / `joint` |
+| `SUBJECTS` | `sub-01 … sub-10` | Space-separated subject list |
+| `EPOCHS` | `500` | Training epochs |
+| `BATCH_SIZE` | `1024` | Batch size |
+| `DATA_PATH` | — | Path to preprocessed EEG data |
+
+Override any variable inline:
 
 ```bash
-conda create -n BCI python=3.12 -y
-conda activate BCI
-pip install torch==2.5.0 torchvision==0.20.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu124
-pip install -r requirements.txt
+ENCODER=EEGNetv4_Encoder MODE=loso EPOCHS=30 bash run.sh
 ```
 
+---
 
-<!-- ## Quick training and test  -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Quick training and test</h2>
+## Task 2 — Image Reconstruction
 
-If you want to quickly reproduce the results in the paper, please download the relevant ``preprocessed data`` and ``model weights`` from [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode) first.
-#### 1.Image Retrieval
-We provide the script to learn the training strategy of EEG Encoder and verify it during training. In this task, we use **normalized clip embedding** to train EEG encoder. Please modify your data set path and run:
-```
-cd Retrieval/
-python ATMS_retrieval.py --logger True --gpu cuda:0  --output_dir ./outputs/contrast
-```
-We also provide the script for ``joint subject training``, which aims to train all subjects jointly and test on a specific subject:
-```
-cd Retrieval/
-python ATMS_retrieval_joint_train.py --joint_train --sub sub-01 True --logger True --gpu cuda:0  --output_dir ./outputs/contrast
-```
+Three benchmark scripts cover the full reconstruction pipeline.
 
-Additionally, replicating the results of other methods (e.g. EEGNetV4) by run
-```
-cd Retrieval/
-contrast_retrieval.py --encoder_type EEGNetv4_Encoder --epochs 30 --batch_size 1024
-```
+### 2.1 High-Level Reconstruction
 
-#### 2.Image Reconstruction
-We provide quick training and inference scripts for ``clip pipeline`` of visual reconstruction. In this task, we use **the original clip embedding** to train EEG encoder. Please modify your data set path and run zero-shot on 200 classes test dataset:
-```
-# Train and generate eeg features in Subject 8
+Entry point: **`Generation/benchmark.sh`**
+
+ATMS encoder → Diffusion Prior → IP-Adapter + SDXL-Turbo.
+
+```bash
 cd Generation/
-python ATMS_reconstruction.py --insubject True --subjects sub-08 --logger True \
---gpu cuda:0  --output_dir ./outputs/contrast
+bash benchmark.sh
 ```
 
-```
-# Reconstruct images in Subject 8
-Generation_metrics_sub8.ipynb
+Per-subject pipeline: (1) train encoder with early stopping, (2) train diffusion prior, (3) generate and evaluate with 7 metrics, (4) aggregate cross-subject summary.
+
+```bash
+# Override subjects or resume from a checkpoint
+SUBJECTS="sub-01 sub-08" bash benchmark.sh
+RESUME=05-09_12-49 SUBJECTS=sub-01 bash benchmark.sh   # eval only
 ```
 
-We also provide scripts for image reconstruction combined ``with the low level pipeline``.
-```
+### 2.2 Low-Level Reconstruction
+
+Entry point: **`Generation/benchmark_lowlevel.sh`**
+
+EEG → SDXL-VAE latent encoder for pixel-level reconstruction.
+
+```bash
 cd Generation/
-
-# step 1: train vae encoder and then generate low level images
-train_vae_latent_512_low_level_no_average.py
-
-# step 2: load low level images and then reconstruct them
-1x1024_reconstruct_sdxl.ipynb
+bash benchmark_lowlevel.sh
 ```
 
+Prerequisite — pre-extract VAE latents:
 
-We provide scripts for caption generation combined ``with the semantic level pipeline``.
+```bash
+python extract_vae_latents.py \
+    --img_dir_training <TRAINING_IMAGES> \
+    --img_dir_test <TEST_IMAGES> \
+    --output_dir <LATENT_DIR>
 ```
+
+### 2.3 Mixed High/Low-Level Reconstruction
+
+Entry point: **`Generation/benchmark_mixed.sh`**
+
+Blends high-level and low-level reconstructions at multiple α ratios.
+
+```bash
 cd Generation/
-
-# step 1: train feature adapter
-image_adapter.ipynb
-
-# step 2: get caption from eeg latent
-GIT_caption_batch.ipynb
-
-# step 3: load text prompt and then reconstruct images
-1x1024_reconstruct_sdxl.ipynb
+bash benchmark_mixed.sh
 ```
 
-To evaluate the quality of the reconstructed images, modify the paths of the reconstructed images and the original stimulus images in the notebook and run:
-```
-#compute metrics, cited from MindEye
-Reconstruction_Metrics_ATM.ipynb
-```
+Requires checkpoints from both `benchmark.sh` and `benchmark_lowlevel.sh`.
 
-<!-- ## Data availability -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Data availability</h2>
-
-We provide you with the ``preprocessed EEG`` and ``preprocessed MEG`` data used in our paper at [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode), as well as the raw image data.
-
-
-Note that the experimental paradigms of the THINGS-EEG and THINGS-MEG datasets themselves are different, so we will provide images and data for the two datasets separately.
-
-You can also download the relevant THINGS-EEG data set and THINGS-MEG data set at osf.io.
-
-The raw and preprocessed EEG dataset, the training and test images are available on [osf](https://osf.io/3jk45/).
-- ``Raw EEG data:`` `../project_directory/eeg_dataset/raw_data/`.
-- ``Preprocessed EEG data:`` `../project_directory/eeg_dataset/preprocessed_data/`.
-- ``Training and test images:`` `../project_directory/image_set/`.
-
-
-The raw and preprocessed MEG dataset, the training and test images are available on [OpenNEURO](https://openneuro.org/datasets/ds004212/versions/2.0.0).
-
-
-
-
-
-<!-- ## EEG/MEG preprocessing -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">EEG/MEG preprocessing</h2>
-
-
-Modify your path and execute the following code to perform the same preprocessing on the raw data as in our experiment:
-```
-cd EEG-preprocessing/
-python EEG-preprocessing/preprocessing.py
+```bash
+ALPHAS="0.0 0.25 0.5 0.75 1.0" bash benchmark_mixed.sh
 ```
 
+---
+
+## Project Structure
+
 ```
-cd MEG-preprocessing/
-MEG-preprocessing/pre_possess.ipynb
+EEG_Image_decode/
+├── Retrieval/
+│   ├── run.sh              ← unified launcher
+│   ├── train_unified.py
+│   ├── eeg_encoders.py
+│   └── retrieval_engine.py
+├── Generation/
+│   ├── benchmark.sh        ← high-level pipeline
+│   ├── benchmark_lowlevel.sh
+│   ├── benchmark_mixed.sh
+│   ├── train.py / train_lowlevel.py / train_encoder.py
+│   ├── evaluate.py / evaluate_lowlevel.py / evaluate_mixed.py
+│   ├── pipeline.py / pipeline_lowlevel.py
+│   └── diffusion_prior.py
+├── EEG-preprocessing/
+├── MEG-preprocessing/
+├── models/                  # ATMS architecture + utilities
+├── eegdatasets.py           # unified dataset loader
+├── encoder_utils.py         # shared training utilities
+└── pretrained_paths.py
 ```
-Also You can get the data set used in this project through the BaiduNetDisk [link](https://pan.baidu.com/s/1-1hgpoi4nereLVqE4ylE_g?pwd=nid5) to run the code.
 
-## TODO
-- [√] Release retrieval and reconstruction scripts.
-- [√] Update training scripts of reconstruction pipeline.
-- [ ] Adding validation sets improves performance evaluation accuracy.
+---
 
-
-
-<!-- ## Acknowledge -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Acknowledge</h2>
-
-1.Thanks to Y Song et al. for their contribution in data set preprocessing and neural network structure, we refer to their work:</br>"[Decoding Natural Images from EEG for Object Recognition](https://arxiv.org/pdf/2308.13234.pdf)".</br> Yonghao Song, Bingchuan Liu, Xiang Li, Nanlin Shi, Yijun Wang, and Xiaorong Gao. 
-
-2.We also thank the authors of [SDRecon](https://github.com/yu-takagi/StableDiffusionReconstruction) for providing the codes and the results. Some parts of the training script are based on [MindEye](https://medarc-ai.github.io/mindeye/) and [MindEye2](https://github.com/MedARC-AI/MindEyeV2). Thanks for the awesome research works.
-
-3.Here we provide our THING-EEG dataset cited in the paper:</br>"[A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758?via%3Dihub)".</br>
-Alessandro T. Gifford, Kshitij Dwivedi, Gemma Roig, Radoslaw M. Cichy.
-
-
-4.Another used THINGS-MEG data set provides a reference:</br>"[THINGS-data, a multimodal collection of large-scale datasets for investigating object representations in human brain and behavior.](https://elifesciences.org/articles/82580.pdf)".</br> Hebart, Martin N., Oliver Contier, Lina Teichmann, Adam H. Rockter, Charles Y. Zheng, Alexis Kidder, Anna Corriveau, Maryam Vaziri-Pashkam, and Chris I. Baker.
-
-
-
-<!-- ## Citation -->
-<h2 style="border-bottom: 1px solid lightgray; margin-bottom: 5px;">Citation</h2>
+## Citation
 
 ```bibtex
 @inproceedings{li2024visual,
- author = {Li, Dongyang and Wei, Chen and Li, Shiying and Zou, Jiachen and Liu, Quanying},
- booktitle = {Advances in Neural Information Processing Systems},
- editor = {A. Globerson and L. Mackey and D. Belgrave and A. Fan and U. Paquet and J. Tomczak and C. Zhang},
- pages = {102822--102864},
- publisher = {Curran Associates, Inc.},
- title = {Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion},
- url = {https://proceedings.neurips.cc/paper_files/paper/2024/file/ba5f1233efa77787ff9ec015877dbd1f-Paper-Conference.pdf},
- volume = {37},
- year = {2024}
-}
-
-
-@article{li2024visual,
-  title={Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion},
-  author={Li, Dongyang and Wei, Chen and Li, Shiying and Zou, Jiachen and Liu, Quanying},
-  journal={arXiv preprint arXiv:2403.07721},
-  year={2024}
+  author    = {Li, Dongyang and Wei, Chen and Li, Shiying and Zou, Jiachen and Liu, Quanying},
+  title     = {Visual Decoding and Reconstruction via {EEG} Embeddings with Guided Diffusion},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {37},
+  pages     = {102822--102864},
+  year      = {2024},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2024/file/ba5f1233efa77787ff9ec015877dbd1f-Paper-Conference.pdf}
 }
 ```
+
+## License
+
+[MIT](LICENSE)

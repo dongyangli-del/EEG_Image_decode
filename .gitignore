@@ -1,6 +1,4 @@
-# ========================================
-# IDE / 编辑器
-# ========================================
+# ── Editor / IDE ──────────────────────────────────────────────────────────────
 .history/
 .vscode/
 .idea/
@@ -8,16 +6,12 @@
 *.swo
 *~
 
-# ========================================
-# 操作系统
-# ========================================
+# ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# ========================================
-# Python
-# ========================================
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -27,26 +21,16 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-eggs/
-.eggs/
-*.manifest
-*.spec
-
-# 虚拟环境
 env/
 venv/
 .venv/
 ENV/
 
-# ========================================
-# Jupyter Notebook
-# ========================================
+# ── Jupyter ───────────────────────────────────────────────────────────────────
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
 
-# ========================================
-# 深度学习 / 模型权重
-# ========================================
+# ── Model checkpoints & weights ───────────────────────────────────────────────
 *.ckpt
 *.pth
 *.pt
@@ -58,9 +42,7 @@ checkpoints/
 ckpts/
 weights/
 
-# ========================================
-# 实验输出 / 日志
-# ========================================
+# ── Experiment outputs & logs ─────────────────────────────────────────────────
 outputs/
 old_outputs/
 logs/
@@ -70,12 +52,10 @@ mlruns/
 lightning_logs/
 *.log
 
-# ========================================
-# 数据文件（通常太大不应上传）
-# ========================================
-# 如需上传特定数据，可用 !data/important.npy 排除
+# ── Large data files ──────────────────────────────────────────────────────────
 data/
 datasets/
+features/
 *.npy
 *.npz
 *.mat
@@ -83,51 +63,35 @@ datasets/
 *.pickle
 *.hdf5
 
-# ========================================
-# 生成的图像 / 结果
-# ========================================
+# ── Generated images ──────────────────────────────────────────────────────────
 generated_imgs/
 generated_imgs_tensor/
 generation_metric_outputs/
 tab_generation_metric_outputs/
 
-# ========================================
-# 项目特定目录
-# ========================================
-# Generation 模块
+# ── Generation module ─────────────────────────────────────────────────────────
 Generation/ckpts/
 Generation/fintune_ckpts/
-Generation/CLIP-dissect/
-Generation/centralRepo/
-Generation/diffusers/
+Generation/models/
+Generation/outputs/
+Generation/old_outputs/
 Generation/generated_imgs/
 Generation/generated_imgs_tensor/
-Generation/Generation/
 Generation/generation_metric_outputs/
-Generation/LAVIS/
-Generation/models/
-Generation/old_outputs/
-Generation/outputs/
 Generation/tab_generation_metric_outputs/
-Generation/THINGS/
-Generation/Visualize/
 Generation/wandb/
+Generation/LAVIS/
+Generation/diffusers/
+Generation/THINGS/
 
-# Retrieval 模块
-Retrieval/centralRepo/
-Retrieval/CLIP-dissect/
-Retrieval/conditional_outputs/
-Retrieval/LAVIS/
-Retrieval/old_outputs/
+# ── Retrieval module ──────────────────────────────────────────────────────────
+Retrieval/models/
 Retrieval/outputs/
-Retrieval/Outputs/
-Retrieval/sliding_window_outputs/
-Retrieval/Visualize/
+Retrieval/old_outputs/
 Retrieval/wandb/
+Retrieval/LAVIS/
 
-# ========================================
-# 其他
-# ========================================
+# ── Misc ──────────────────────────────────────────────────────────────────────
 *.tmp
 *.bak
 *.cache

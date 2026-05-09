@@ -1,0 +1,50 @@
+name: Bug Report
+description: Report a reproducibility issue or code bug
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug.  Please fill in the sections below.
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      placeholder: "e.g. 3.12.3"
+    validations:
+      required: true
+
+  - type: input
+    id: pytorch_version
+    attributes:
+      label: PyTorch version
+      placeholder: "e.g. 2.5.0+cu124"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal command(s) that trigger the bug
+      placeholder: |
+        cd Generation/
+        bash benchmark.sh
+    validations:
+      required: true
+
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Error message / traceback
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Subject ID, dataset split, GPU type, etc.
