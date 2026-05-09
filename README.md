@@ -14,9 +14,14 @@
   Southern University of Science and Technology
 </p>
 
-<img src="imgs/fig-framework.png" alt="Framework" width="88%"/>
-<br><br>
-<img src="imgs/fig-genexample.png" alt="Reconstruction examples" width="78%"/>
+<img src="imgs/fig-framework.png" alt="Framework" style="max-width: 100%; height: auto;"/>
+Framework of our proposed method.
+
+<!--  -->
+<img src="imgs/fig-genexample.png" alt="fig-genexample" style="max-width: 90%; height: auto;"/>  
+
+Some examples of using EEG to reconstruct stimulus images.
+
 
 </div>
 
@@ -61,7 +66,7 @@ All configurations are controlled by environment variables at the top of the scr
 Override any variable inline:
 
 ```bash
-ENCODER=EEGNetv4_Encoder MODE=loso EPOCHS=30 bash run.sh
+ENCODER=EEGNetv4_Encoder MODE=loso EPOCHS=100 bash run.sh
 ```
 
 ---
