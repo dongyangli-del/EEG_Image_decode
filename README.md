@@ -22,21 +22,21 @@
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### Environment
+### ⚙️ Environment
 
 ```bash
 . setup.sh && conda activate BCI
 ```
 
-### Data
+### 📦 Data
 
 Download preprocessed EEG data and THINGS stimulus images from [Hugging Face](https://huggingface.co/datasets/LidongYang/EEG_Image_decode).
 
 ---
 
-## Task 1 — Image Retrieval
+## 🔍 Task 1 — Image Retrieval
 
 Entry point: **`Retrieval/run.sh`**
 
@@ -49,14 +49,14 @@ bash run.sh
 
 All configurations are controlled by environment variables at the top of the script:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ENCODER` | `ATMS` | Encoder architecture (`ATMS` / `EEGNetv4_Encoder` / `EEGConformer_Encoder` / …) |
-| `MODE` | `intra` | Training mode: `intra` (within-subject) / `loso` (leave-one-out) / `joint` |
-| `SUBJECTS` | `sub-01 … sub-10` | Space-separated subject list |
-| `EPOCHS` | `500` | Training epochs |
-| `BATCH_SIZE` | `1024` | Batch size |
-| `DATA_PATH` | — | Path to preprocessed EEG data |
+| Variable     | Default            | Description                                                                     |
+|:-------------|:-------------------|:--------------------------------------------------------------------------------|
+| `ENCODER`    | `ATMS`             | Encoder architecture (`ATMS` / `EEGNetv4_Encoder` / `EEGConformer_Encoder` / …) |
+| `MODE`       | `intra`            | Training mode: `intra` (within-subject) / `loso` (leave-one-out) / `joint`      |
+| `SUBJECTS`   | `sub-01 … sub-10`  | Space-separated subject list                                                    |
+| `EPOCHS`     | `500`              | Training epochs                                                                 |
+| `BATCH_SIZE` | `1024`             | Batch size                                                                      |
+| `DATA_PATH`  | —                  | Path to preprocessed EEG data                                                   |
 
 Override any variable inline:
 
@@ -66,11 +66,11 @@ ENCODER=EEGNetv4_Encoder MODE=loso EPOCHS=30 bash run.sh
 
 ---
 
-## Task 2 — Image Reconstruction
+## 🎨 Task 2 — Image Reconstruction
 
 Three benchmark scripts cover the full reconstruction pipeline.
 
-### 2.1 High-Level Reconstruction
+### 🧠 2.1 High-Level Reconstruction
 
 Entry point: **`Generation/benchmark.sh`**
 
@@ -89,7 +89,7 @@ SUBJECTS="sub-01 sub-08" bash benchmark.sh
 RESUME=05-09_12-49 SUBJECTS=sub-01 bash benchmark.sh   # eval only
 ```
 
-### 2.2 Low-Level Reconstruction
+### 🖼️ 2.2 Low-Level Reconstruction
 
 Entry point: **`Generation/benchmark_lowlevel.sh`**
 
@@ -109,7 +109,7 @@ python extract_vae_latents.py \
     --output_dir <LATENT_DIR>
 ```
 
-### 2.3 Mixed High/Low-Level Reconstruction
+### 🔀 2.3 Mixed High/Low-Level Reconstruction
 
 Entry point: **`Generation/benchmark_mixed.sh`**
 
@@ -128,7 +128,7 @@ ALPHAS="0.0 0.25 0.5 0.75 1.0" bash benchmark_mixed.sh
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 EEG_Image_decode/
@@ -155,7 +155,7 @@ EEG_Image_decode/
 
 ---
 
-## Citation
+## 📝 Citation
 
 ```bibtex
 @inproceedings{li2024visual,
@@ -169,6 +169,6 @@ EEG_Image_decode/
 }
 ```
 
-## License
+## 📄 License
 
 [MIT](LICENSE)
