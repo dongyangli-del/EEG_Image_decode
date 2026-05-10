@@ -10,7 +10,7 @@
 </p>
 
 <p>
-  <b>Dongyang Li · Chen Wei · Shiying Li · Jiachen Zou · Quanying Liu</b><br>
+  <b><a href="https://dongyangli-del.github.io/">Dongyang Li</a> · <a href="https://hedges0-0.github.io/">Chen Wei</a> · <a href="https://github.com/1275673085/"> Shiying Li</a> · <a href="https://phyever.github.io/">Jiachen Zou</a> · <a href="https://faculty.sustech.edu.cn/liuqy/en/">Quanying Liu</a></b><br>
   Southern University of Science and Technology
 </p>
 
@@ -160,7 +160,7 @@ EEG_Image_decode/
 
 ---
 
-## 📝 Citation
+## 📝 Related Citations
 
 ```bibtex
 @inproceedings{li2024visual,
@@ -172,8 +172,18 @@ EEG_Image_decode/
   year      = {2024},
   url       = {https://proceedings.neurips.cc/paper_files/paper/2024/file/ba5f1233efa77787ff9ec015877dbd1f-Paper-Conference.pdf}
 }
+@inproceedings{li2025brainflora,
+  title={BrainFLORA: Uncovering Brain Concept Representation via Multimodal Neural Embeddings},
+  author={Li, Dongyang and Qin, Haoyang and Wu, Mingyang and Wei, Chen and Liu, Quanying},
+  booktitle={Proceedings of the 33rd ACM International Conference on Multimedia},
+  pages={5577--5586},
+  year={2025}
+}
+@inproceedings{li2026mindpilot,
+  title={MindPilot: Closed-loop Visual Stimulation Optimization for Brain Modulation with {EEG}-guided Diffusion},
+  author={Dongyang Li and Kunpeng Xie and Mingyang Wu and Yiwei Kong and Jiahua Tang and Haoyang Qin and Chen Wei and Quanying Liu},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026},
+  url={https://openreview.net/forum?id=7jdmXx869Q}
+}
 ```
-
-## 📄 License
-
-[MIT](LICENSE)
